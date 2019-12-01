@@ -1,35 +1,31 @@
-#include "../utils.h"
 #include <stdio.h>
 #include <math.h>
+#include <string>
+#include <fstream>
+#include <iostream>
 #include <iomanip>
-#include <chrono>
 int main()
 {
-    vector<string> input;
-    Utils utils;
-    input = utils.loadFile("input.txt");
-    double total;
-    auto start = chrono::high_resolution_clock::now();
-    for (unsigned x = 0; x < input.size(); x++)
+    std::fstream fin("input.txt", std::fstream::in);
+    std::string line;
+    double total2;
+    double total1;
+    while (getline(fin, line))
     {
-        double test = stod(input.at(x));
+
+        double test = stod(line);
+        test = floor((test / 3) - 2);
+        total1 += test;
         while (test > 0)
         {
-            test /= 3;
-            test = floor(test);
-            test -= 2;
+            test = floor((test / 3) - 2);
             if (test > 0)
             {
-                total += test;
+                total2 += test;
             }
         }
     }
-    auto stop = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
-
-    // To get the value of duration use the count()
-    // member function on the duration object
-    cout << duration.count() << endl;
-    cout << setprecision(15) << total << endl; // 3477353 // 5213146
+    std::cout << std::setprecision(15) << total1 << std::endl; // 3477353 // 5213146
+    std::cout << std::setprecision(15) << total2 << std::endl;
     return 0;
 }
