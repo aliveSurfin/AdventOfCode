@@ -12,10 +12,10 @@ int main()
     double total1;
     while (getline(fin, line))
     {
-
         double test = stod(line);
         test = floor((test / 3) - 2);
         total1 += test;
+        total2 += test;
         while (test > 0)
         {
             test = floor((test / 3) - 2);
