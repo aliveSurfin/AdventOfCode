@@ -206,18 +206,12 @@ int main()
     int xout = 0;
     int yout = 0;
     long long int count = 0;
-    // for (long long int x = 0; x < wire1.points.size(); x++)
-    // {
-    //     cout << "ONE|" << wire1.points.at(x).x << " " << wire1.points.at(x).y << " |TWO| " << wire2.points.at(x).x << " " << wire2.points.at(x).y << endl;
-    // }
-    // return;
     for (long long int x = 1; x < wire1.points.size(); x++)
     {
         cout << ((float)count / float((wire1.points.size() * wire2.points.size()))) * 100 << " " << distance << " " << xout << " " << yout << endl;
         for (long long int y = 1; y < wire2.points.size(); y++)
         {
             count++;
-            // cout << count << " / " << (wire1.points.size() * wire2.points.size()) << endl
 
             if (wire1.points.at(x).x == wire2.points.at(y).x && wire1.points.at(x).y == wire2.points.at(y).y && abs(wire1.points.at(x).x) != 0)
             {
@@ -236,5 +230,5 @@ int main()
         }
     }
     cout << distance << endl; // 651
-    cout << steps << endl; //7534
+    cout << steps << endl;    //7534
 }
