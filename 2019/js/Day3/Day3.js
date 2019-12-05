@@ -53,9 +53,11 @@ function distance(p1, p2) {
 }
 
 function calculateAndDisplay(commands1, commands2) {
-    
+
     commands1 = commands1.split(",");
     commands2 = commands2.split(",");
+    commands1.unshift("R0");
+    commands2.unshift("R0");
     var canvas = document.getElementById("myCanvas");
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
