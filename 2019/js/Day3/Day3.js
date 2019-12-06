@@ -5,6 +5,7 @@ class point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.steps=0;
     }
 }
 class vector {
@@ -124,9 +125,10 @@ function calculateAndDisplay(input1, input2) {
     curx = 0;
     cury = 0
     points1.push(new point(0, 0));
+    var steps = 0;
     for (let a = 0; a < commands1.length; a++) { // parse commands 1
         var curvalue = parseInt(commands1[a].substr(1));
-
+        steps += Math.abs(curvalue);
         if (commands1[a][0] == 'L') {
             var x = curx - curvalue;
             points1.push(new point(x, cury));
@@ -144,12 +146,15 @@ function calculateAndDisplay(input1, input2) {
             points1.push(new point(curx, y));
             cury = y;
         }
+        points1[points1.length - 1].steps += steps;
     }
     curx = 0;
     cury = 0
     points2.push(new point(0, 0));
+    steps = 0;
     for (let a = 0; a < commands2.length; a++) { // parse commands 2
         var curvalue = parseInt(commands2[a].substr(1));
+        steps += Math.abs(curvalue);
         if (commands2[a][0] == 'L') {
             var x = curx - curvalue;
             points2.push(new point(x, cury));
@@ -167,6 +172,8 @@ function calculateAndDisplay(input1, input2) {
             points2.push(new point(curx, y));
             cury = y;
         }
+
+        points2[points2.length - 1].steps += steps;
     }
 
     for (let a = 1; a < points1.length; a++) { // get max of points1
@@ -230,13 +237,16 @@ function calculateAndDisplay(input1, input2) {
     var closestDist = 2147000000;
     var closestPoint;
     var startPoint = new point(map(0, minw, maxw, startx), map(0, minh, maxh, starty));
-
+    var lowestSteps = 2147000000;
     for (let b = 0; b < points2.length - 1; b++) {
         for (let a = 0; a < points1.length - 1; a++) {
             var points1vector = new vector(points1[a], points1[a + 1]);
             var points2vector = new vector(points2[b], points2[b + 1]);
             if (intersect(points1vector, points2vector) != "NO") {
-
+                if (lowestSteps > points1[a].steps + points2[b].steps) {
+                    lowestSteps = points1[a].steps + points2[b].steps;
+                    console.log(lowestSteps);
+                }
                 ctx.strokeStyle = "#FFFF00";
                 var iPoint = intersect(points1vector, points2vector);
                 // console.log(distance(iPoint, new point(0, 0)));
@@ -262,5 +272,7 @@ function calculateAndDisplay(input1, input2) {
     ctx.stroke();
     console.log(closestDist);
     console.log(closestPoint);
+    console.log(lowestSteps);
+    alert("dist: "+ closestDist +"\n steps: " +lowestSteps);
 
 }
