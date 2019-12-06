@@ -7,12 +7,12 @@ class orbit {
         this.orbits = b;
         this.suborbits = new Array();
     }
-    find(label) {
+    dfind(label) {
         if (this.name == label) {
             return true;
         }
         for (let x = 0; x < this.suborbits.length; x++) {
-            if (this.suborbits[x].find(label)) {
+            if (this.suborbits[x].dfind(label)) {
                 return true;
             }
         }
@@ -23,15 +23,15 @@ class orbit {
             return this.orbits;
         }
         for (let x = 0; x < this.suborbits.length; x++) {
-            if (this.suborbits[x].find(label)) {
-                return this.suborbits.at(x).getOrbits(label);
+            if (this.suborbits[x].dfind(label)) {
+                return this.suborbits[x].getOrbits(label);
             }
         }
         return false;
     }
     insert(parent, child, orbits) {
         orbits++;
-        if (name == parent) {
+        if (this.name == parent) {
             part1 += orbits;
             this.suborbits.push(new orbit(child, orbits, parent));
         }
@@ -43,29 +43,35 @@ class orbit {
 
 }
 function part2f(o) {
-    if (o.find("YOU") && o.find("SAN")) {
+    if (o.dfind("YOU") && o.dfind("SAN")) {
         var b = (o.getOrbits("YOU") + o.getOrbits("SAN")) - (o.orbits * 2);
         if (b < part2) {
             part2 = b;
         }
         for (let x = 0; x < o.suborbits.length; x++) {
-            part2(o.suborbits[x]);
+            part2f(o.suborbits[x]);
         }
     }
 }
 function calculateAndDisplay(input) {
     input = input.split("\n");
-    orbits = new orbit("COM", 0, "");
-    var newInput = input;
-    var i =0;
+    orbits = new orbit("COM", 0, "basenode");
+    var i = 0;
+    var a = document.createElement("div");
+    a.setAttribute("id", "COM");
+    a.innerHTML = "COM";
+    document.body.appendChild(a);
     do {
         for (let x = 0; x < input.length; x++) {
-
             // console.log(input[x].substring(0, pos), input.length, " ", newInput.length);
             var comp = input[x].trim().split(")");
-            if (orbits.find(comp[0]) && !orbits.find(comp[1])) {
+            if (orbits.dfind(comp[0]) && !orbits.dfind(comp[1])) {
                 orbits.insert(comp[0], comp[1], orbits.orbits)
-                console.log("inserted", input[x])
+                var b = document.getElementById(comp[0]);
+                var c = document.createElement("div");
+                c.setAttribute("id", comp[1]);
+                c.innerHTML = comp[1];
+                b.appendChild(c);
                 i++;
             }
         }
@@ -74,6 +80,6 @@ function calculateAndDisplay(input) {
     console.log("DOING PART 2");
     part2f(orbits);
     console.log(part1);
-    console.log(part2);
+    console.log(part2 - 2);
 
 }
