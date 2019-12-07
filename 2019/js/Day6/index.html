@@ -93,7 +93,13 @@
 
             // Normalize for fixed-depth.
             nodes.forEach(function (d) { d.y = d.depth * 50; });
-            nodes.forEach(function (d) { d.x = d.x*3;  });
+            nodes.forEach(function (d) {
+                if (d.x > window.innerHeight/10) {
+                    d.x = d.x*3;
+                }else{
+                    d.x = d.x-(d.x*-3);
+                }
+            });
 
             // Update the nodes…
             var node = vis.selectAll("g.node")
