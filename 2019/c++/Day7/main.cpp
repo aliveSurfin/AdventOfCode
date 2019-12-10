@@ -2,15 +2,17 @@
 #include <algorithm>
 int lastoutput = -37;
 int eoutput = -37;
-vector<int> intcodes;
-int intComp(int prevOut, int amp, bool firstrun)
+vector<int> tempvector;
+int largestOutput;
+vector<int> intComp(int prevOut, int amp, bool firstrun, vector<int> intcodes, int pos)
 {
-    int x = 0;
+    // getchar();
+    int x = pos;
     int inputam = false;
     while (x < intcodes.size())
     {
         // getchar();
-        cout << "RAW: " << intcodes.at(x) << " | ";
+        // cout << "RAW: " << intcodes.at(x) << " | ";
         string comp = to_string(intcodes.at(x));
         while (comp.size() < 5)
         {
@@ -19,24 +21,31 @@ int intComp(int prevOut, int amp, bool firstrun)
         bool par1im = comp.at(2) == '1';
         bool par2im = comp.at(1) == '1';
         bool par3im = comp.at(0) == '1';
-        cout << "OPCODE: " << comp << " ";
-        cout << "par1 : "
-             << "imediate: " << par1im;
-        cout << "| par2 : "
-             << "imediate: " << par2im;
-        cout << "| par3 : "
-             << "imediate: " << par3im;
-        cout << endl;
+        // cout << "OPCODE: " << comp << " ";
+        // cout << "par1 : "
+        //      << "imediate: " << par1im;
+        // cout << "| par2 : "
+        //      << "imediate: " << par2im;
+        // cout << "| par3 : "
+        //      << "imediate: " << par3im;
+        // cout << endl;
         switch (stoi(comp.substr(3)))
         {
         case 99:
-            cout << "STOPING" << endl;
-            x = intcodes.size();
+        {
+            // cout << "STOPING" << endl;
+            // x = intcodes.size();
+            vector<int> l;
+            l.push_back(x);
+            l.push_back(99);
+            // getchar();
+            return l;
             break;
+        }
         case 1:
         {
-            cout << "add ";
-            cout << endl;
+            // cout << "add ";
+            // cout << endl;
             int operand1;
             if (par1im)
             {
@@ -56,13 +65,13 @@ int intComp(int prevOut, int amp, bool firstrun)
                 operand2 = intcodes.at(intcodes.at(x + 2));
             }
             intcodes.at(intcodes.at(x + 3)) = operand1 + operand2;
-            cout << "BECOMES : " << intcodes.at(intcodes.at(x + 3)) << endl;
+            // cout << "BECOMES : " << intcodes.at(intcodes.at(x + 3)) << endl;
             x += 4;
             break;
         }
         case 2:
         {
-            cout << "mult ";
+            // cout << "mult ";
 
             int operand1;
             if (par1im)
@@ -83,12 +92,12 @@ int intComp(int prevOut, int amp, bool firstrun)
                 operand2 = intcodes.at(intcodes.at(x + 2));
             }
             intcodes.at(intcodes.at(x + 3)) = operand1 * operand2;
-            cout << "BECOMES : " << intcodes.at(intcodes.at(x + 3)) << endl;
+            // cout << "BECOMES : " << intcodes.at(intcodes.at(x + 3)) << endl;
             x += 4;
             break;
         }
         case 3:
-            cout << "inputting " << to_string(amp) << " to " << intcodes.at(x + 1) << endl;
+            // cout << "inputting " << to_string(amp) << " to " << intcodes.at(x + 1) << endl;
             if (firstrun)
             {
                 if (!inputam)
@@ -105,6 +114,7 @@ int intComp(int prevOut, int amp, bool firstrun)
             {
                 intcodes.at(intcodes.at(x + 1)) = prevOut;
             }
+
             /**
                      * Opcode 3 takes a single integer as input and saves it to the position
                      *  given by its only parameter. For example, the instruction 3,50 would 
@@ -113,19 +123,26 @@ int intComp(int prevOut, int amp, bool firstrun)
             x += 2;
             break;
         case 4:
-            cout << "OUTPUT : ";
-            cout << to_string((par1im ? intcodes.at(x + 1) : intcodes.at(intcodes.at(x + 1)))) << endl;
+        {
+            // cout << "OUTPUT : ";
+            // cout << to_string((par1im ? intcodes.at(x + 1) : intcodes.at(intcodes.at(x + 1)))) << endl;
             eoutput = (par1im ? intcodes.at(x + 1) : intcodes.at(intcodes.at(x + 1)));
-            return eoutput;
             x += 2;
+            tempvector = intcodes;
+            vector<int> l;
+            l.push_back(x);
+            l.push_back(eoutput);
+            // getchar();
+            return l;
             /**
          * Opcode 4 outputs the value of its only parameter. 
          * For example, the instruction 4,50 would output the value at address 50.
          * */
             break;
+        }
         case 5:
         {
-            cout << "jump if true ";
+            // cout << "jump if true ";
 
             int operand1;
             if (par1im)
@@ -136,7 +153,7 @@ int intComp(int prevOut, int amp, bool firstrun)
             {
                 operand1 = intcodes.at(intcodes.at(x + 1));
             }
-            cout << operand1;
+            // cout << operand1;
             int operand2;
             if (par2im)
             {
@@ -148,7 +165,7 @@ int intComp(int prevOut, int amp, bool firstrun)
             }
             if (operand1 != 0)
             {
-                cout << " jumped to " << operand2 << endl;
+                // cout << " jumped to " << operand2 << endl;
                 x = operand2;
             }
             else
@@ -159,7 +176,7 @@ int intComp(int prevOut, int amp, bool firstrun)
         }
         case 6:
         {
-            cout << "jump if false";
+            // cout << "jump if false";
 
             int operand1;
             if (par1im)
@@ -170,7 +187,7 @@ int intComp(int prevOut, int amp, bool firstrun)
             {
                 operand1 = intcodes.at(intcodes.at(x + 1));
             }
-            cout << " " << operand1;
+            // cout << " " << operand1;
             int operand2;
             if (par2im)
             {
@@ -183,7 +200,7 @@ int intComp(int prevOut, int amp, bool firstrun)
             if (operand1 == 0)
             {
                 x = operand2;
-                cout << " jumped" << endl;
+                // cout << " jumped" << endl;
             }
             else
             {
@@ -193,7 +210,7 @@ int intComp(int prevOut, int amp, bool firstrun)
         }
         case 7:
         {
-            cout << "less than";
+            // cout << "less than";
 
             int operand1;
             if (par1im)
@@ -213,23 +230,23 @@ int intComp(int prevOut, int amp, bool firstrun)
             {
                 operand2 = intcodes.at(intcodes.at(x + 2));
             }
-            cout << " " << operand1 << " | " << operand2;
+            // cout << " " << operand1 << " | " << operand2;
             if (operand1 < operand2)
             {
                 intcodes.at(intcodes.at(x + 3)) = 1;
-                cout << " :yes " << endl;
+                // cout << " :yes " << endl;
             }
             else
             {
                 intcodes.at(intcodes.at(x + 3)) = 0;
-                cout << " :no " << endl;
+                // cout << " :no " << endl;
             }
             x += 4;
             break;
         }
         case 8:
         {
-            cout << "equals";
+            // cout << "equals";
 
             int operand1;
             if (par1im)
@@ -249,24 +266,25 @@ int intComp(int prevOut, int amp, bool firstrun)
             {
                 operand2 = intcodes.at(intcodes.at(x + 2));
             }
-            cout << " " << operand1 << " | " << operand2;
+            // cout << " " << operand1 << " | " << operand2;
             if (operand1 == operand2)
             {
                 intcodes.at(intcodes.at(x + 3)) = 1;
-                cout << " :yes" << endl;
+                // cout << " :yes" << endl;
             }
             else
             {
                 intcodes.at(intcodes.at(x + 3)) = 0;
-                cout << " :no" << endl;
+                // cout << " :no" << endl;
             }
             x += 4;
             break;
         }
-        cout << "ERROR FOUND " << endl;
-        default: exit(1);
+
+        default:
+            exit(1);
         }
-        cout << endl;
+        // cout << endl;
     }
 }
 bool isUnique(int a, int b, int c, int d, int e)
@@ -296,7 +314,7 @@ bool isUnique(int a, int b, int c, int d, int e)
 }
 vector<int> parseInput(vector<string> input)
 {
-    // vector<int> intcodes;
+    vector<int> intcodes;
     string a = "";
     for (int x = 0; x < input.size(); x++)
     {
@@ -312,7 +330,7 @@ vector<int> parseInput(vector<string> input)
                 if (a != "")
                 {
                     intcodes.push_back(stoi(a));
-                    cout << a << endl;
+                    // cout << a << endl;
                     a = "";
                 }
             }
@@ -325,7 +343,7 @@ vector<int> parseInput(vector<string> input)
     if (a != "")
     {
         intcodes.push_back(stoi(a));
-        cout << a << endl;
+        // cout << a << endl;
     }
     return intcodes;
 }
@@ -333,10 +351,9 @@ int main()
 {
     vector<string> input;
     Utils utils;
-    input = utils.loadFile("inputtest.txt");
+    input = utils.loadFile("input.txt");
     vector<int> intcodes;
     intcodes = parseInput(input);
-    cout << "parsed input" << endl;
     vector<int> old = intcodes;
     int output = 0;
     for (int a = 5; a < 10; a++)
@@ -350,35 +367,89 @@ int main()
                     for (int e = 5; e < 10; e++)
                     {
                         intcodes = old;
+                        vector<int> aint = old;
+                        int apos = 0;
+                        vector<int> bint = old;
+                        int bpos = 0;
+                        vector<int> cint = old;
+                        int cpos = 0;
+                        vector<int> dint = old;
+                        int dpos = 0;
+                        vector<int> eint = old;
+                        int epos = 0;
+                        vector<int> temp;
                         if (!isUnique(a, b, c, d, e))
                         {
                             continue;
                         }
+                        cout << "---------" << endl
+                             << endl
+                             << "A B C D E" << endl;
+                        cout << "---------" << endl;
                         cout << a << " " << b << " " << c << " " << d << " " << e << endl;
                         bool stop = false;
                         bool firstrun = true;
                         while (!stop)
                         {
+                            vector<int> cycleinput;
+
+                            vector<int> cycleoutput;
                             int aout;
                             int eout;
                             if (firstrun)
                             {
-                                aout = intComp(0, a, firstrun);
+                                eout = 0;
+                            }
+                            cycleinput.push_back(eout);
+                            temp = intComp(eout, a, firstrun, aint, apos);
+                            aout = temp.at(1);
+                            apos = temp.at(0);
+                            aint = tempvector;
+
+                            cycleinput.push_back(aout);
+                            temp = intComp(aout, b, firstrun, bint, bpos);
+                            int bout = temp.at(1);
+                            bpos = temp.at(0);
+                            bint = tempvector;
+
+                            cycleinput.push_back(bout);
+                            temp = intComp(bout, c, firstrun, cint, cpos);
+                            int ceout = temp.at(1);
+                            cpos = temp.at(0);
+                            cint = tempvector;
+
+                            cycleinput.push_back(ceout);
+                            temp = intComp(ceout, d, firstrun, dint, dpos);
+                            int dout = temp.at(1);
+                            dpos = temp.at(0);
+                            dint = tempvector;
+
+                            cycleinput.push_back(dout);
+                            temp = intComp(dout, e, firstrun, eint, epos);
+                            eout = temp.at(1);
+                            epos = temp.at(0);
+                            eint = tempvector;
+                            if (eout == 99)
+                            {
+                                stop = true;
                             }
                             else
                             {
-                                aout = intComp(eout, a, firstrun);
+                                // cout << eoutput << endl;
                             }
-                            int bout = intComp(aout, b, firstrun);
-                            int ceout = intComp(bout, c, firstrun);
-                            int dout = intComp(ceout, d, firstrun);
-                            eout = intComp(dout, e, firstrun);
-                            if (eout == 99)
+                            firstrun = false;
+                            for (int x = 0; x < cycleinput.size(); x++)
                             {
-                                break;
+                                string arrow = (x == cycleinput.size() - 1) ? "v" : "->";
+                                cout << cycleinput.at(x) << arrow;
                             }
+                            cout << endl;
                         }
-                        cout << eoutput << endl;
+                        // cout << eoutput << endl;
+                        if (eoutput > largestOutput)
+                        {
+                            largestOutput = eoutput;
+                        }
                         // getchar();
                     }
                 }
@@ -388,6 +459,6 @@ int main()
     // intcodes.at(1) = 0;
     // intcodes.at(2) = 1;
     cout << endl
-         << output << endl;
+         << largestOutput << endl;
     return 0;
 }
