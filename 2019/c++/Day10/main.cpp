@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <algorithm>
 using namespace std;
 bool isBlocked(int x1, int y1, int x2, int y2)
 {
@@ -12,6 +13,8 @@ public:
     int x;
     int y;
     string print;
+    double angle;
+    int distance;
     bool operator==(const point &rhs) const
     {
         return ((x == rhs.x) && (y == rhs.y));
@@ -20,53 +23,41 @@ public:
     {
         return ((x != rhs.x) && (y != rhs.y));
     }
-    vector<point> viewable;
-    vector<point> notviewable;
-    void addviewable(point p)
+    string output()
     {
-        if (p.x == x && p.y == y)
-        {
-            return;
-        }
-        bool add = true;
-        for (int x = 0; x < viewable.size(); x++)
-        {
-            if (viewable.at(x).x == p.x && viewable.at(x).x == p.x)
-            {
-                add = false;
-                break;
-            }
-        }
-        if (add)
-        {
-            viewable.push_back(p);
-        }
+        string out;
+        out += print;
+        out += " angle: " + to_string(angle);
+        out += " distance: " + to_string(distance);
+        return out;
     }
-    void addnotviewable(point p)
+    void setAngle(point a)
     {
-        if (p.x == x && p.y == y)
-        {
-            return;
-        }
-        bool add = true;
-        for (int x = 0; x < notviewable.size(); x++)
-        {
-            if (notviewable.at(x).x == p.x && notviewable.at(x).x == p.x)
-            {
-                add = false;
-                break;
-            }
-        }
-        if (add)
-        {
-            notviewable.push_back(p);
-        }
+        int deltax = x - a.x;
+        int deltay = a.y - y;
+        double rads = atan2(deltay, deltax);
+        angle = rads * (180.0 / 3.141592653589793238463);
     }
+    int viewable;
+    vector<point> inview;
+    bool destroyed;
     point(int a, int b)
     {
         x = a;
         y = b;
         print = " " + to_string(x) + " , " + to_string(y);
+    }
+};
+
+struct sortpoints
+{
+    inline bool operator()(const point &struct1, const point &struct2)
+    {
+        if (struct1.angle == struct2.angle)
+        {
+            return struct1.distance < struct2.distance;
+        }
+        return (struct1.angle < struct2.angle);
     }
 };
 int distance(point p1, point p2)
@@ -126,19 +117,19 @@ vector<point> calculate(vector<point> all)
                 }
                 if (isBetween(all.at(a), all.at(b), all.at(c)))
                 {
-                    // cout << all.at(c).print << " is between " << all.at(a).print << " and " << all.at(b).print << endl;
+                    //cout << all.at(c).print << " is between " << all.at(a).print << " and " << all.at(b).print << endl;
                     viewable = false;
                     break;
                 }
             }
             if (viewable)
             {
-                // cout << "?" << endl;
-                all.at(a).addviewable(all.at(b));
+                //cout << "?" << endl;
+                all.at(a).viewable++;
             }
             else
             {
-                all.at(a).addnotviewable(all.at(b));
+                //all.at(a).notviewable.push_back(all.at(b));
             }
         }
     }
@@ -148,7 +139,6 @@ vector<point> calculate2(vector<string> all)
 {
     for (int i = 0; i < all.size(); i++)
     {
-        
     }
 }
 int main()
@@ -171,16 +161,30 @@ int main()
     cout << "calculating..." << endl;
     vector<point> calcedasts = calculate(asts);
     cout << "done..." << endl;
-    int highest = 0;
-    for (int x = 0; x < calcedasts.size(); x++)
+    point highest = calcedasts.at(0);
+    for (int x = 1; x < calcedasts.size(); x++)
     {
-        cout << calcedasts.at(x).viewable.size() << endl;
-        if (calcedasts.at(x).viewable.size() > highest)
+        //cout << calcedasts.at(x).viewable << endl;
+        if (calcedasts.at(x).viewable > highest.viewable)
         {
-            highest = calcedasts.at(x).viewable.size();
+            highest = calcedasts.at(x);
         }
     }
-    cout << asts.size() << endl;
-    cout << highest << endl;
+    //cout << asts.size() << endl;
+    cout << highest.print << " " << highest.viewable << endl;
+    for (int x = 0; x < calcedasts.size(); x++)
+    {
+        if (highest == calcedasts.at(x))
+        {
+            calcedasts.at(x).destroyed = true;
+        }
+        calcedasts.at(x).distance = distance(calcedasts.at(x), highest);
+        calcedasts.at(x).setAngle(highest);
+    }
+    sort(calcedasts.begin(), calcedasts.end(), sortpoints());
+    for (int x = 0; x < calcedasts.size(); x++)
+    {
+        cout << calcedasts.at(x).output() << endl;
+    }
     return 0;
 }
