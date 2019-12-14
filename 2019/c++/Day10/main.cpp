@@ -34,9 +34,19 @@ public:
     void setAngle(point a)
     {
         int deltax = x - a.x;
-        int deltay = a.y - y;
+        int deltay = y - a.y;
         double rads = atan2(deltay, deltax);
-        angle = rads * (180.0 / 3.141592653589793238463);
+        angle = rads * (180 / 3.141592653589793238463);
+        // angle = (angle - (-180)) * (360 - (0)) / (180 - (-90)) + (0);
+        if (angle < -90)
+        {
+            angle = (180 - (abs(angle))) + 180;
+        }
+        // angle = rads;
+        // if (angle < 0)
+        // {
+        //     angle = abs(angle) * 2;
+        // }
     }
     int viewable;
     vector<point> inview;
@@ -46,6 +56,7 @@ public:
         x = a;
         y = b;
         print = " " + to_string(x) + " , " + to_string(y);
+        destroyed = false;
     }
 };
 
@@ -135,6 +146,22 @@ vector<point> calculate(vector<point> all)
     }
     return all;
 }
+int wrapf(int i, vector<point> a)
+{
+    if (i == (a.size() - 1))
+    {
+        return 0;
+    }
+    return (i + 1);
+}
+int wrapb(int i, vector<point> a)
+{
+    if (i == 0)
+    {
+        return (a.size() - 1);
+    }
+    return (i - 1);
+}
 vector<point> calculate2(vector<string> all)
 {
     for (int i = 0; i < all.size(); i++)
@@ -182,9 +209,48 @@ int main()
         calcedasts.at(x).setAngle(highest);
     }
     sort(calcedasts.begin(), calcedasts.end(), sortpoints());
+    vector<vector<point>> a;
+    double curangle = -1;
+    vector<point> empty;
     for (int x = 0; x < calcedasts.size(); x++)
     {
-        cout << calcedasts.at(x).output() << endl;
+        if (calcedasts.at(x) == highest)
+        {
+            continue;
+        }
+        if (curangle == calcedasts.at(x).angle)
+        {
+            a.at(a.size() - 1).push_back(calcedasts.at(x));
+        }
+        else
+        {
+            a.push_back(empty);
+            a.at(a.size() - 1).push_back(calcedasts.at(x));
+            curangle = calcedasts.at(x).angle;
+        }
     }
+    int destroyed = 0;
+    while (destroyed < 200)
+    {
+
+        for (int x = 0; x < a.size(); x++)
+        {
+            for (int y = 0; y < a.at(x).size(); y++)
+            {
+                if (a.at(x).at(y).destroyed == true)
+                {
+                    continue;
+                }
+                else
+                {
+                    destroyed++;
+                    a.at(x).at(y).destroyed = true;
+                    cout << destroyed << ": " << a.at(x).at(y).output() << endl;
+                    break;
+                }
+            }
+        }
+    }
+
     return 0;
 }
