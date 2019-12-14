@@ -98,7 +98,7 @@ public:
             }
             case 3:
             {
-                memory.at(getInputPosition(par3mode, 3)) = 2;
+                memory.at(getInputPosition(par1mode, 1)) = 2;
                 memoryPos += 2;
                 break;
             }
@@ -118,6 +118,7 @@ public:
                 {
                     output = memory.at(relativeBase + memory.at(memoryPos + 1));
                 }
+                output = operand1;
                 lastOutput = output;
                 memoryPos += 2;
                 cout << "OUTPUTTING " << output << endl;
