@@ -52,6 +52,7 @@ public:
     bool debug;
     vector<int> input;
     int inputPos;
+    bool hasFoundOxygen;
     void incrementInput()
     {
         if (inputPos == 3)
@@ -73,6 +74,7 @@ public:
         cout << "memory allocted" << endl;
         relativeBase = 0;
         debug = db;
+        hasFoundOxygen = false;
     }
     long long int getOperand(int mode, int par)
     {
@@ -192,6 +194,10 @@ public:
                     cout << "OUTPUTTING " << output << endl;
                 }
                 //getchar();
+                if (output == 2)
+                {
+                    hasFoundOxygen = true;
+                }
                 return output;
                 break;
             }
@@ -359,35 +365,23 @@ int main()
     int xpos = 0;
     int ypos = 0;
     int runs = 0;
-    while (cont)
+    while (i.hasFoundOxygen != true)
     {
-        int out = i.compute();
-        xpos = pos(xpos, ypos, i.input.at(i.inputPos)).x;
-        ypos = pos(xpos, ypos, i.input.at(i.inputPos)).y;
-        cout << xpos << " " << ypos << " | " << out << endl;
-        //getchar();
-        switch (out)
-        {
-        case 0:
+        if (i.lastOutput == 0)
         {
             i.inputPos = rand_lim(3);
-            break;
         }
-        case 1:
+        i.compute();
+        if (i.lastOutput == 1)
         {
-            if (find(map.begin(), map.end(), pos(xpos, ypos)) == map.end())
-            {
-                map.push_back(pos(xpos, ypos));
-            }
-            break;
+            map.push_back(pos(map.at(map.size() - 1).x, map.at(map.size() - 1).y, i.inputPos));
         }
-        case 2:
+        if (abs(map.at(map.size() - 1).x) > 25 || abs(map.at(map.size() - 1).y) > 25)
         {
-            cont = false;
-            break;
+            i.inputPos = (i.inputPos + 2) % input.size();
         }
-        case 99:
-            cout << "wow " << endl;
-        }
+        cout << map.size() << endl;
+        cout << map.at(map.size() - 1).x << " " << map.at(map.size() - 1).y << endl;
+        getchar();
     }
 }
