@@ -1,6 +1,11 @@
 #include "../utils.h"
 #include <algorithm>
 #include <iostream>
+#include <random>
+
+typedef std::mt19937 rng_type;
+
+rng_type rng;
 using namespace std;
 class pos
 {
@@ -11,6 +16,7 @@ public:
     }
     int x;
     int y;
+    char value;
     pos(int x, int y, int move = -1)
     {
         if (move == -1)
@@ -53,15 +59,82 @@ public:
     vector<int> input;
     int inputPos;
     bool hasFoundOxygen;
-    void incrementInput()
+    int rand_lim(int a, int b)
     {
-        if (inputPos == 3)
+        std::uniform_int_distribution<rng_type::result_type> udist(a, b);
+        /* return a random number in the range [0..limit)
+ */
+        rng_type::result_type const seedval = time(NULL);
+        rng.seed(seedval);
+        rng_type::result_type random_number = udist(rng);
+        //cout << random_number << endl;
+        return random_number;
+    }
+    void changeInput()
+    {
+        if (inputPos == 0)
         {
-            inputPos = 0;
+            int r = rand_lim(0, 2);
+            if (r == 0)
+            {
+                inputPos = 1;
+            }
+            else if (r == 1)
+            {
+                inputPos = 2;
+            }
+            else
+            {
+                inputPos = 3;
+            }
+        }
+        else if (inputPos == 1)
+        {
+            int r = rand_lim(0, 2);
+            if (r == 0)
+            {
+                inputPos = 3;
+            }
+            else if (r == 1)
+            {
+                inputPos = 2;
+            }
+            else
+            {
+                inputPos = 0;
+            }
+        }
+        else if (inputPos == 2)
+        {
+            int r = rand_lim(0, 2);
+            if (r == 0)
+            {
+                inputPos = 1;
+            }
+            else if (r == 1)
+            {
+                inputPos = 0;
+            }
+            else
+            {
+                inputPos = 3;
+            }
         }
         else
         {
-            inputPos++;
+            int r = rand_lim(0, 2);
+            if (r == 0)
+            {
+                inputPos = 1;
+            }
+            else if (r == 1)
+            {
+                inputPos = 2;
+            }
+            else
+            {
+                inputPos = 0;
+            }
         }
     }
     intComp(vector<long long int> code, bool db)
@@ -335,20 +408,92 @@ vector<long long int> parseInput(vector<string> input)
     }
     return intcodes;
 }
-int rand_lim(int limit)
+void display(vector<pos> map, vector<pos> walls, int curx, int cury)
 {
-    /* return a random number in the range [0..limit)
- */
-
-    int divisor = RAND_MAX / limit;
-    int retval;
-
-    do
+    vector<string> a;
+    for (int x = 0; x < 50; x++)
     {
-        retval = rand() / divisor;
-    } while (retval == limit);
+        string b;
+        for (int y = 0; y < 50; y++)
+        {
+            b += " ";
+        }
+        a.push_back(b);
+    }
+    for (int x = 0; x < map.size(); x++)
+    {
+        if (map.at(x).y == 25 && map.at(x).x == 25)
+        {
+            if (map.at(x).value != 'o')
+            {
 
-    return retval + 1;
+                continue;
+            }
+        }
+        if (map.at(x).x == curx && map.at(x).y == cury)
+        {
+            a.at(map.at(x).y).at(map.at(x).x) = '%';
+        }
+        else
+        {
+            a.at(map.at(x).y).at(map.at(x).x) = map.at(x).value;
+        }
+    }
+    for (int x = 0; x < walls.size(); x++)
+    {
+        if (walls.at(x).y == 25 && walls.at(x).x == 25)
+        {
+            continue;
+        }
+        a.at(walls.at(x).y).at(walls.at(x).x) = walls.at(x).value;
+    }
+    for (int x = 0; x < 100; x++)
+    {
+        cout << "-";
+    }
+    cout << endl;
+    for (int x = 0; x < a.size(); x++)
+    {
+        cout << "| ";
+        for (int y = 0; y < a.at(x).size(); y++)
+        {
+            cout << a.at(x).at(y) << " ";
+        }
+        cout << " |";
+        cout << endl;
+    }
+    for (int x = 0; x < 100; x++)
+    {
+        cout << "-";
+    }
+    cout << endl;
+}
+int reverseDirection(int a)
+{
+    if (a == 0)
+    {
+        return 1;
+    }
+    if (a == 1)
+    {
+        return 0;
+    }
+    if (a == 2)
+    {
+        return 3;
+    }
+    if (a == 3)
+    {
+        return 2;
+    }
+}
+vector<pos> addToVector(vector<pos> v, pos p)
+{
+    if (find(v.begin(), v.end(), p) == v.end())
+    {
+        v.push_back(p);
+    }
+    return v;
 }
 int main()
 {
@@ -360,28 +505,83 @@ int main()
     intComp i(intcodes, false);
     i.input = {1, 2, 3, 4};
     vector<pos> map;
-    map.push_back(pos(0, 0));
-    bool cont = true;
-    int xpos = 0;
-    int ypos = 0;
-    int runs = 0;
-    while (i.hasFoundOxygen != true)
+    vector<pos> walls;
+    map.push_back(pos(25, 25));
+    map.at(map.size() - 1).value = 'o';
+    int xpos = 25;
+    int ypos = 25;
+    int sametile = 0;
+    vector<int> steps;
+    while (!i.hasFoundOxygen)
     {
-        if (i.lastOutput == 0)
-        {
-            i.inputPos = rand_lim(3);
-        }
+
         i.compute();
         if (i.lastOutput == 1)
         {
-            map.push_back(pos(map.at(map.size() - 1).x, map.at(map.size() - 1).y, i.inputPos));
+            pos p = pos(xpos, ypos, i.input.at(i.inputPos));
+            xpos = p.x;
+            ypos = p.y;
+            p.value = '.';
+            map = addToVector(map, p);
+            cout << xpos << " " << ypos << " map" << endl;
+            steps.push_back(i.inputPos);
+            sametile = 0;
+            //i.inputPos = rand_lim(3);
         }
-        if (abs(map.at(map.size() - 1).x) > 25 || abs(map.at(map.size() - 1).y) > 25)
+        else if (i.lastOutput == 0)
         {
-            i.inputPos = (i.inputPos + 2) % input.size();
+            sametile++;
+            if (sametile >= 4 && steps.size() > 2)
+            {
+                for (int x = steps.size() - 1; x > -1; x--)
+                {
+                    i.inputPos = reverseDirection(steps.at(x));
+                    i.compute();
+                    if (i.hasFoundOxygen)
+                    {
+                        break;
+                    }
+                    if (i.lastOutput == 1)
+                    {
+                        pos p = pos(xpos, ypos, i.input.at(i.inputPos));
+                        xpos = p.x;
+                        ypos = p.y;
+                        p.value = '.';
+                        map = addToVector(map, p);
+                        cout << xpos << " " << ypos << " map" << endl;
+                        //steps.push_back(i.input.at(i.inputPos));
+                    }
+                    else if (i.lastOutput == 0)
+                    {
+                        pos p = pos(xpos, ypos, i.input.at(i.inputPos));
+                        p.value = '#';
+                        walls = addToVector(walls, p);
+                        cout << p.x << " " << p.y << " wall" << endl;
+                    }
+                    // display(map, walls);
+                    cout << "REVERSING" << endl;
+                }
+                steps.clear();
+                sametile = 0;
+            }
+            else
+            {
+                pos p = pos(xpos, ypos, i.input.at(i.inputPos));
+                p.value = '#';
+                walls = addToVector(walls, p);
+                cout << p.x << " " << p.y << " wall" << endl;
+                // i.changeInput();
+                int a = i.rand_lim(0, 3);
+                while (a == i.inputPos || a == reverseDirection(i.inputPos))
+                {
+                    a = i.rand_lim(0, 3);
+                }
+                i.inputPos = a;
+            }
         }
-        cout << map.size() << endl;
-        cout << map.at(map.size() - 1).x << " " << map.at(map.size() - 1).y << endl;
-        getchar();
+        display(map, walls, xpos, ypos);
     }
+    map.push_back(pos(map.at(map.size() - 1).x, map.at(map.size() - 1).y, i.input.at(i.inputPos)));
+    map.at(map.size() - 1).value = '*';
+    display(map, walls, xpos, ypos);
 }
