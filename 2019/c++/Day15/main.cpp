@@ -408,8 +408,9 @@ vector<long long int> parseInput(vector<string> input)
     }
     return intcodes;
 }
-void display(vector<pos> map, vector<pos> walls, int curx, int cury)
+void display(vector<pos> map, int curx, int cury)
 {
+    //cout << curx << " " << cury << endl;
     vector<string> a;
     for (int x = 0; x < 50; x++)
     {
@@ -439,13 +440,58 @@ void display(vector<pos> map, vector<pos> walls, int curx, int cury)
             a.at(map.at(x).y).at(map.at(x).x) = map.at(x).value;
         }
     }
-    for (int x = 0; x < walls.size(); x++)
+    for (int x = 0; x < 100; x++)
     {
-        if (walls.at(x).y == 25 && walls.at(x).x == 25)
+        cout << "-";
+    }
+    cout << endl;
+    for (int x = 0; x < a.size(); x++)
+    {
+        cout << "| ";
+        for (int y = 0; y < a.at(x).size(); y++)
         {
-            continue;
+            cout << a.at(x).at(y) << " ";
         }
-        a.at(walls.at(x).y).at(walls.at(x).x) = walls.at(x).value;
+        cout << " |";
+        cout << endl;
+    }
+    for (int x = 0; x < 100; x++)
+    {
+        cout << "-";
+    }
+    cout << endl;
+}
+void displayp2(vector<pos> *map, int curx, int cury)
+{
+    //cout << curx << " " << cury << endl;
+    vector<string> a;
+    for (int x = 0; x < 50; x++)
+    {
+        string b;
+        for (int y = 0; y < 50; y++)
+        {
+            b += " ";
+        }
+        a.push_back(b);
+    }
+    for (int x = 0; x < map->size(); x++)
+    {
+        if (map->at(x).y == 25 && map->at(x).x == 25)
+        {
+            if (map->at(x).value != 'o')
+            {
+
+                continue;
+            }
+        }
+        if (map->at(x).x == curx && map->at(x).y == cury)
+        {
+            a.at(map->at(x).y).at(map->at(x).x) = '%';
+        }
+        else
+        {
+            a.at(map->at(x).y).at(map->at(x).x) = map->at(x).value;
+        }
     }
     for (int x = 0; x < 100; x++)
     {
@@ -468,6 +514,54 @@ void display(vector<pos> map, vector<pos> walls, int curx, int cury)
     }
     cout << endl;
 }
+vector<string> createP2Map(vector<pos> map)
+{
+    int minx = map.at(0).x;
+    int miny = map.at(0).y;
+    int maxy = miny;
+    int maxx = minx;
+    for (int x = 0; x < map.size(); x++)
+    {
+        if (map.at(x).x < minx)
+        {
+            minx = map.at(x).x;
+        }
+        if (map.at(x).x > maxx)
+        {
+            maxx = map.at(x).x;
+        }
+        if (map.at(x).y < miny)
+        {
+            miny = map.at(x).y;
+        }
+        if (map.at(x).y > maxy)
+        {
+            maxy = map.at(x).y;
+        }
+    }
+    maxx = maxx + abs(minx);
+    maxy = maxy + abs(miny);
+    string a = "";
+    while (a.size() <= (maxx))
+    {
+        a += '#';
+    }
+    vector<string> output;
+    for (int x = 0; x <= maxy; x++)
+    {
+        output.push_back(a);
+    }
+    for (int x = 0; x < map.size(); x++)
+    {
+        char p = map.at(x).value;
+        if (p == '%')
+        {
+            p = '.';
+        }
+        output.at(map.at(x).y + abs(miny)).at(map.at(x).x + abs(minx)) = p;
+    }
+    return output;
+}
 int reverseDirection(int a)
 {
     if (a == 0)
@@ -487,13 +581,93 @@ int reverseDirection(int a)
         return 2;
     }
 }
-vector<pos> addToVector(vector<pos> v, pos p)
+vector<pos> addToVector(vector<pos> v, pos p, char val)
 {
     if (find(v.begin(), v.end(), p) == v.end())
     {
         v.push_back(p);
+        v.at(v.size() - 1).value = val;
     }
     return v;
+}
+void travelp1(intComp i, int xpos, int ypos, vector<pos> map, int moves = 1)
+{
+    intComp temp = i;
+    vector<pos> tempMap = map;
+    for (int a = 0; a < 4; a++)
+    {
+        i = temp;
+        map = tempMap;
+        i.inputPos = a;
+        pos p = pos(xpos, ypos, i.inputPos + 1);
+        if (find(map.begin(), map.end(), p) == map.end())
+        {
+            i.compute();
+            if (i.lastOutput == 0)
+            {
+                map = addToVector(map, p, '#');
+            }
+            else if (i.lastOutput == 1)
+            {
+                map = addToVector(map, p, '.');
+                display(map, p.x, p.y);
+                travelp1(i, p.x, p.y, map, (moves + 1));
+            }
+            else
+            {
+                cout << "FOUND IT " << endl;
+                addToVector(map, p, '%');
+                display(map, p.x, p.y);
+                cout << (moves + 1) << endl;
+                cout << map.size() << endl;
+                exit(1);
+            }
+        }
+    }
+}
+void travelp2(intComp i, int xpos, int ypos, vector<pos> *map, int moves = 1)
+{
+    intComp temp = i;
+    for (int a = 0; a < 4; a++)
+    {
+        i = temp;
+        i.inputPos = a;
+        pos p = pos(xpos, ypos, i.inputPos + 1);
+        if (find(map->begin(), map->end(), p) == map->end())
+        {
+            i.compute();
+            if (i.lastOutput == 0)
+            {
+                map->push_back(pos(p.x, p.y));
+                map->at(map->size() - 1).value = '#';
+            }
+            else if (i.lastOutput == 1)
+            {
+                map->push_back(pos(p.x, p.y));
+                map->at(map->size() - 1).value = '.';
+                //displayp2(map, p.x, p.y);
+                travelp2(i, p.x, p.y, map);
+            }
+            else
+            {
+                map->push_back(pos(p.x, p.y));
+                map->at(map->size() - 1).value = 'o';
+                //displayp2(map, p.x, p.y);
+                travelp2(i, p.x, p.y, map);
+            }
+        }
+    }
+}
+bool vecstringscontains(vector<string> strings, char tofind)
+{
+    for (int x = 0; x < strings.size(); x++)
+    {
+        if (find(strings.at(x).begin(), strings.at(x).end(), tofind) != strings.at(x).end())
+        {
+            return true;
+        }
+    }
+    return false;
 }
 int main()
 {
@@ -507,81 +681,72 @@ int main()
     vector<pos> map;
     vector<pos> walls;
     map.push_back(pos(25, 25));
-    map.at(map.size() - 1).value = 'o';
-    int xpos = 25;
-    int ypos = 25;
-    int sametile = 0;
-    vector<int> steps;
-    while (!i.hasFoundOxygen)
+    //travelp1(i, 25, 25, map);
+    vector<pos> mapP2;
+    mapP2 = addToVector(mapP2, pos(0, 0), '#');
+    travelp2(i, 0, 0, &mapP2);
+    cout << "dis" << endl;
+    vector<string> p2Map = createP2Map(mapP2);
+    for (int x = 0; x < p2Map.size(); x++)
     {
-
-        i.compute();
-        if (i.lastOutput == 1)
+        for (int y = 0; y < p2Map.at(x).size(); y++)
         {
-            pos p = pos(xpos, ypos, i.input.at(i.inputPos));
-            xpos = p.x;
-            ypos = p.y;
-            p.value = '.';
-            map = addToVector(map, p);
-            cout << xpos << " " << ypos << " map" << endl;
-            steps.push_back(i.inputPos);
-            sametile = 0;
-            //i.inputPos = rand_lim(3);
+            cout << p2Map.at(x).at(y) << " ";
         }
-        else if (i.lastOutput == 0)
-        {
-            sametile++;
-            if (sametile >= 4 && steps.size() > 2)
-            {
-                for (int x = steps.size() - 1; x > -1; x--)
-                {
-                    i.inputPos = reverseDirection(steps.at(x));
-                    i.compute();
-                    if (i.hasFoundOxygen)
-                    {
-                        break;
-                    }
-                    if (i.lastOutput == 1)
-                    {
-                        pos p = pos(xpos, ypos, i.input.at(i.inputPos));
-                        xpos = p.x;
-                        ypos = p.y;
-                        p.value = '.';
-                        map = addToVector(map, p);
-                        cout << xpos << " " << ypos << " map" << endl;
-                        //steps.push_back(i.input.at(i.inputPos));
-                    }
-                    else if (i.lastOutput == 0)
-                    {
-                        pos p = pos(xpos, ypos, i.input.at(i.inputPos));
-                        p.value = '#';
-                        walls = addToVector(walls, p);
-                        cout << p.x << " " << p.y << " wall" << endl;
-                    }
-                    // display(map, walls);
-                    cout << "REVERSING" << endl;
-                }
-                steps.clear();
-                sametile = 0;
-            }
-            else
-            {
-                pos p = pos(xpos, ypos, i.input.at(i.inputPos));
-                p.value = '#';
-                walls = addToVector(walls, p);
-                cout << p.x << " " << p.y << " wall" << endl;
-                // i.changeInput();
-                int a = i.rand_lim(0, 3);
-                while (a == i.inputPos || a == reverseDirection(i.inputPos))
-                {
-                    a = i.rand_lim(0, 3);
-                }
-                i.inputPos = a;
-            }
-        }
-        display(map, walls, xpos, ypos);
+        cout << endl;
     }
-    map.push_back(pos(map.at(map.size() - 1).x, map.at(map.size() - 1).y, i.input.at(i.inputPos)));
-    map.at(map.size() - 1).value = '*';
-    display(map, walls, xpos, ypos);
+    int count = 0;
+    while (vecstringscontains(p2Map, '.'))
+    {
+        count++;
+        vector<string> temp = p2Map;
+        for (int y = 0; y < temp.size(); y++)
+        {
+            for (int x = 0; x < temp.at(y).size(); x++)
+            {
+                if (temp.at(y).at(x) == 'o')
+                {
+                    //up
+                    if (temp.at(y - 1).at(x) == '.')
+                    {
+                        p2Map.at(y - 1).at(x) = 'o';
+                    }
+                    //down
+                    if (temp.at(y + 1).at(x) == '.')
+                    {
+                        p2Map.at(y + 1).at(x) = 'o';
+                    }
+                    //left#
+                    if (temp.at(y).at(x - 1) == '.')
+                    {
+                        p2Map.at(y).at(x - 1) = 'o';
+                    }
+                    //right
+                    if (temp.at(y).at(x + 1) == '.')
+                    {
+                        p2Map.at(y).at(x + 1) = 'o';
+                    }
+                }
+            }
+        }
+        for (int x = 0; x < p2Map.size(); x++)
+        {
+            for (int y = 0; y < p2Map.at(x).size(); y++)
+            {
+                cout << p2Map.at(x).at(y) << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+        getchar();
+    }
+    for (int x = 0; x < p2Map.size(); x++)
+    {
+        for (int y = 0; y < p2Map.at(x).size(); y++)
+        {
+            cout << p2Map.at(x).at(y) << " ";
+        }
+        cout << endl;
+    }
+    cout << count << endl;
 }
