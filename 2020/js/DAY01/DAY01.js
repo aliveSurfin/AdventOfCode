@@ -229,8 +229,8 @@ function timeAvg(fun, amnt) {
 function main() {
     input = input.split("\n");
     console.log(input.length);
-    let a = timeAvg(part2opt,1)
-    let b = timeAvg(part2,1)
+    let a = timeAvg(part2opt)
+    let b = timeAvg(part2)
 
     console.log("opt : " + a + " |  non opt: " +b )
 
