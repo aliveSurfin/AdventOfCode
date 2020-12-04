@@ -125,6 +125,8 @@ function main() {
             for (var key of Object.keys(passports[x])) {
                 if (validkeys(key, passports[x][key])) {
                     validpc++;
+                } else {
+                    break;
                 }
             }
 
