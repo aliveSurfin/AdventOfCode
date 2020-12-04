@@ -2,7 +2,7 @@
 const { performance } = require('perf_hooks');
 console.log("DAY 1 ");
 let input =
-    `1728
+`1728
 1621
 1856
 1683

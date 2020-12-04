@@ -6,7 +6,7 @@ function readFile(path) {
 function toArray(d, del) {
     return d.split(del);
 }
-function count(s, c) {
+function countChars(s, c) {
     let cnt = 0;
     for (let x = 0; x < s.length; x++) {
         if (s[x] == c) {
@@ -19,7 +19,6 @@ function main() {
     let validcount = 0;
     let validcountpart2 = 0;
     let test = toArray(readFile("test.txt"), "\n");
-    let a = [];
     for (let x = 0; x < test.length; x++) {
         let c = test[x].split(":");
         let c1 = c[0].split(" ")[0];
