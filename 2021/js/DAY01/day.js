@@ -3,7 +3,7 @@ let readfile = require('../utils/readfile');
 let data = readfile(true)
 
 //part1
-let countp1 = 0;
+let countp1 = 0
 data.forEach((e, i) => {
     if (i >= 1) {
         if (e > data[i - 1]) {
@@ -11,8 +11,6 @@ data.forEach((e, i) => {
         }
     }
 })
-
-//part 2
 let countp2 = 0;
 let cur = null;
 let prev;
