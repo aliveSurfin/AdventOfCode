@@ -5,20 +5,19 @@ import java.nio.file.Paths
 
 class ReadInput {
     companion object {
-        fun createPath(day: String, testInput: Boolean = false): String {
+        fun createPath(path: String): String {
             return Paths.get("").toAbsolutePath().toString() +
-                    "\\src\\main\\kotlin\\aoc\\days\\day" +
-                    day + "\\" + (if (testInput) "test" else "input") + ".txt"
+                    "\\src\\main\\kotlin\\" + path;
 
         }
 
-        fun toIntList(day: String, testInput: Boolean = false): List<Int> {
-            return File(createPath(day, testInput)).readLines().map { it.toInt() }
+        fun toIntList(path: String): List<Int> {
+            return File(createPath(path)).readLines().map { it.toInt() }
         }
 
-        fun toStringList(day: String, testInput: Boolean = false): List<String> {
-            println(createPath(day, testInput))
-            return File(createPath(day, testInput)).readLines()
+        fun toStringList(path: String): List<String> {
+            println(createPath(path))
+            return File(createPath(path)).readLines()
         }
     }
 }
