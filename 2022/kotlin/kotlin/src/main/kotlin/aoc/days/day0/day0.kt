@@ -11,9 +11,10 @@ open class DayBaseClass(var testInput: Boolean = false) {
                 (if (testInput) "test.txt" else "input.txt")
         this.readInput()
         this.solve()
+        println("Input \n ${this.input}")
         println("Part 1: ${this.p1}")
         println("Part 2: ${this.p2}")
-        println("Input \n ${this.input}")
+
     }
     open fun solve(){
 

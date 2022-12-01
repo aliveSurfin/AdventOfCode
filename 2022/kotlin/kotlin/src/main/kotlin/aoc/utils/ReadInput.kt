@@ -16,8 +16,11 @@ class ReadInput {
         }
 
         fun toStringList(path: String): List<String> {
-            println(createPath(path))
             return File(createPath(path)).readLines()
+        }
+
+        fun toString(path: String): String{
+            return File(createPath(path)).readText()
         }
     }
 }

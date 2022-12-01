@@ -7,26 +7,16 @@ class Day (testInput: Boolean = false): DayBaseClass(testInput) {
 
     @Override
     override fun readInput(){
-        this.input = ReadInput.toIntList(this.path)
+        this.input = ReadInput.toString(this.path)
     }
 
     @Override
     override fun solve() {
-        val elves = mutableListOf<Int>()
-        var current  =0
-        (input as List<String>).forEach {
-            if (it.equals("")){
-                elves.add(current)
-                current = 0
-            }else {
-                current += it.toInt()
-            }
-            }
-        elves.sort()
-        this.p1 = elves.takeLast(1).sum()
-        this.p2 = elves.takeLast(3).sum()
-        //Part 1: 71502
-        //Part 2: 208191
+        val sums  = (this.input as String).split("\r\n\r\n")
+            .map { it.split("\r\n").sumOf { it.toInt() }}.toMutableList()
+        sums.sort()
+        this.p1 = sums.takeLast(1).sum()
+        this.p2 = sums.takeLast(3).sum()
     }
 }
 fun main(){
