@@ -3,7 +3,7 @@ package aoc.days.zEmptyDay
 import aoc.days.day0.DayBaseClass
 import aoc.utils.ReadInput
 
-class Day : DayBaseClass() {
+class Day (testInput: Boolean = false): DayBaseClass(testInput) {
 
     @Override
     override fun readInput(){
