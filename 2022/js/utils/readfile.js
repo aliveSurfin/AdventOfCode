@@ -1,10 +1,14 @@
 const fs = require('fs');
 
 
-function readfile(int = false, path = "./input.txt") {
+function readfile({ int = true, path = "input.txt", split = true } = {}) {
     try {
-        const data = fs.readFileSync(path, 'utf8').split('\n').filter(Boolean) // we do not like empty lines 
-        return int ? data.map((e) => { return parseInt(e) }) : data
+        let data = fs.readFileSync(path, 'utf8')
+        if (split) {
+            data = data.split('\n')
+            return int ? data.map((e) => { return parseInt(e) }) : data
+        }
+        return data
     } catch (err) {
         console.error(err, path)
     }
