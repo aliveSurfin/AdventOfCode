@@ -12,8 +12,8 @@ class Day (testInput: Boolean = false): DayBaseClass(testInput) {
 
     @Override
     override fun solve() {
-        val sums  = (this.input as String).split("\r\n\r\n")
-            .map { it.split("\r\n").sumOf { it.toInt() }}.toMutableList()
+        val sums  = (this.input as String).replace("\r","").split("\n\n")
+            .map { it.split("\n").sumOf { it.toInt() }}.toMutableList()
         sums.sort()
         this.p1 = sums.takeLast(1).sum()
         this.p2 = sums.takeLast(3).sum()
