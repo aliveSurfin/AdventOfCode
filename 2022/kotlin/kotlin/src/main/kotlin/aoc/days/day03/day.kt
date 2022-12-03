@@ -26,25 +26,22 @@ class Day (testInput: Boolean = false): DayBaseClass(testInput) {
         }
         while (x < arr.size){
             val set1 = arr[x].toHashSet()
-            val set2 = arr[x+1].toHashSet()
-            val set3 = arr[x+2].toHashSet()
+            set1.retainAll(arr[x+1].toHashSet())
+            set1.retainAll(arr[x+2].toHashSet())
 
-            set1.retainAll(set2)
-            set1.retainAll(set3)
-            (this.p2 as MutableList<Int>).add(set1.toList().map { getPriority(it) }.sum())
+            (this.p2 as MutableList<Int>).add(set1.toList().sumOf { getPriority(it) })
             x+=3
         }
         this.p2 = (this.p2 as MutableList<Int>).sum()
     }
 
     fun part1(){
-        this.p1 = mutableListOf<Int>()
 
         this.p1 = (this.input as List<String>).map { it.chunked(it.length/2) }.sumOf{
             val set1 = it[0].toHashSet()
             val set2 = it[1].toHashSet()
             set1.retainAll(set2)
-            (set1.toList().map { getPriority(it) }.sum())
+            (set1.toList().sumOf { getPriority(it) })
         }
     }
     @Override
