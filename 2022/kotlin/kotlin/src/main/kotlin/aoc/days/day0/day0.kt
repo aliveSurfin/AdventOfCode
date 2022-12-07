@@ -1,13 +1,15 @@
 package aoc.days.day0
 
 import aoc.utils.ReadInput
+import java.io.File
+
 open class DayBaseClass(var testInput: Boolean = false) {
     var path : String = ""
     var input : Any = ""
     var p1 : Any = 0;
     var p2 : Any = 0;
     init {
-        this.path = getPackage()?.split(".")?.joinToString("\\").toString() + "\\" +
+        this.path = getPackage()?.replace(".", File.separator) + File.separator +
                 (if (testInput) "test.txt" else "input.txt")
         this.readInput()
         this.solve()

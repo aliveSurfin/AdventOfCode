@@ -7,7 +7,7 @@ class ReadInput {
     companion object {
         fun createPath(path: String): String {
             return Paths.get("").toAbsolutePath().toString() +
-                    "\\src\\main\\kotlin\\" + path;
+                    "${File.separator}src${File.separator}main${File.separator}kotlin${File.separator}" + path;
 
         }
 
