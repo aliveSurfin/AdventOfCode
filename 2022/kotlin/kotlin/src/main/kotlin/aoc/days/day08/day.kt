@@ -2,7 +2,10 @@ package aoc.days.day08
 
 import aoc.days.day0.DayBaseClass
 import aoc.utils.ReadInput
+import kotlin.math.max
 
+//Part 1: 1820
+//Part 2: 385112
 class Day(testInput: Boolean = false) : DayBaseClass(testInput) {
     var grid: MutableList<MutableList<Int>> = mutableListOf()
 
@@ -50,38 +53,17 @@ class Day(testInput: Boolean = false) : DayBaseClass(testInput) {
                     count +=1;
                 }else{
 
-                    var left = row.subList(0, x).any { it >= item }
-                    var right = row.subList(x + 1, row.lastIndex + 1).any { it >= item }
-
                     var leftView = 0
                     var rightView = 0
                     var upView = 0
                     var downView = 0
 
+                    var left = false
+                    var right = false
                     var up = false
                     var down = false
-                    var i =y;
-                    while (i>0){
-                        i--;
-                        val check = grid[i][x]
-                        if (check >= item){
-                            up = true;
-                            break;
-                        }
-                    }
-                    i=y;
-                    while (i<grid.lastIndex){
-                        i++;
-                        val check = grid[i][x]
-                        if (check >= item){
-                            down = true;
-                        }
-                    }
-                    testInput
-                    if (!left || !right || !up || !down){
-                        count+=1;
-                    }
 
+                    var i = 0;
                     //right
                     i=x
                     while (i< row.lastIndex){
@@ -90,6 +72,7 @@ class Day(testInput: Boolean = false) : DayBaseClass(testInput) {
                             rightView++
                         }else{
                             rightView++
+                            right = true
                             break;
                         }
                     }
@@ -101,6 +84,7 @@ class Day(testInput: Boolean = false) : DayBaseClass(testInput) {
                             leftView++
                         }else{
                             leftView++
+                            left = true
                             break;
                         }
                     }
@@ -111,7 +95,8 @@ class Day(testInput: Boolean = false) : DayBaseClass(testInput) {
                         if(grid[i][x]< item){
                             upView++;
                         }else{
-                            upView++;
+                            upView++
+                            up = true
                             break;
                         }
                     }
@@ -123,13 +108,14 @@ class Day(testInput: Boolean = false) : DayBaseClass(testInput) {
                             downView++
                         }else{
                             downView++
+                            down = true
                             break;
                         }
                     }
-                    val thisView = upView * leftView * downView * rightView
-                    if(thisView > maxView){
-                        maxView = thisView
+                    if (!left || !right || !up || !down){
+                        count+=1;
                     }
+                    maxView = max((upView * leftView * downView * rightView),maxView)
                 }
                 print(" ")
             }
