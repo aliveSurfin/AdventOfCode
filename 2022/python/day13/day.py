@@ -1,5 +1,6 @@
 with open("input.txt") as file:
     lines = [line.strip() for line in file.readlines()]
+from functools import cmp_to_key
 
 print(lines)
 skipnext = False
@@ -34,6 +35,7 @@ def check(left, right):
         res = check(left, [right])
     return res
 
+fulllist = []
 for idx, x in enumerate(lines):
     if not x:
         continue
@@ -46,6 +48,8 @@ for idx, x in enumerate(lines):
     right = lines[idx+1]
     left = eval(left)
     right = eval(right)
+    fulllist.append(left)
+    fulllist.append(right)
 
     print("Pair No: {2} ... left: {0} ... right: {1}".format(left,right,pairno))
     valid = check(left,right)
@@ -57,6 +61,13 @@ for idx, x in enumerate(lines):
         valids.append(pairno)
     skipnext = True
 
-print(valids)
-print(sum(valids))
+print("p1:", sum(valids))
+
+fulllist.append([[2]])
+fulllist.append([[6]])
+fulllist.sort(key=cmp_to_key(check))
+
+firstIndex = fulllist.index([[2]])+1
+secondIndex = fulllist.index([[6]])+1
+print("p2:", firstIndex, "*" ,secondIndex,firstIndex*secondIndex)
 
