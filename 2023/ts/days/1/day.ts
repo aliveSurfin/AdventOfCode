@@ -1,9 +1,9 @@
 import { Day } from "../../day";
-class Day0 extends Day {
+class Day1 extends Day {
 
 
     constructor(){
-        super(Day0.name.toLowerCase())
+        super(__dirname)
     }
 
     solve(){
@@ -12,4 +12,4 @@ class Day0 extends Day {
 }
 
 
-new Day0().solve()
+new Day1().solve()

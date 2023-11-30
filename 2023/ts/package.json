@@ -5,8 +5,8 @@
         "tslib": "^2.6.2",
         "typescript": "^5.3.2"
     },
-
     "scripts": {
-        "day": "ts-node ./days/day$DAY/day.ts"
+        "day": "ts-node ./days/$DAY/day.ts",
+        "all": "for d in days/*/ ; do ts-node $d/day.ts; done"
     }
 }
