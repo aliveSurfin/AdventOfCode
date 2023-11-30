@@ -1,24 +1,42 @@
 import * as fs from 'fs';
-import { DAYS_PATH } from './consts';
 
 export class Day {
 
     input: String
-    // testInput: String
+    useTestInput : boolean = false
+
     listOfStrings: string[] = []
     listOfNumbers: number[] = []
 
-    readFile(day : String, useTestInput = false) : String{
+    p1 : number | null  = null
+    p2 : number | null  = null
 
-        let path = useTestInput ? `${day}/test.txt`: `${day}/input.txt`;
+
+    readFile(day : String) : String{
+
+        let path = this.useTestInput ? `${day}/test.txt`: `${day}/input.txt`;
         return fs.readFileSync(path,'utf8')
     }
 
     constructor(day: String, useTestInput = false){
-        this.input = this.readFile(day, useTestInput)
-        console.log(`Using test input? ${useTestInput? "Yes" : "No"}`)
+        console.log(`\nDay ${day.split("/").at(-1)}`)
+        this.useTestInput = useTestInput
+        this.input = this.readFile(day)
         this.listOfStrings = this.input.split("\n")
         this.listOfNumbers = this.listOfStrings.map((e) => { return parseInt(e)})
-        console.log(this)
+    }
+
+    solveP1(){
+        console.log("p1 not solved")
+    }
+
+    solveP2(){
+        console.log("p2 not solved")
+    }
+
+
+    solve(){
+        this.solveP1()
+        this.solveP2()
     }
 }

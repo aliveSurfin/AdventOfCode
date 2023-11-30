@@ -5,10 +5,6 @@ class Day1 extends Day {
     constructor(){
         super(__dirname)
     }
-
-    solve(){
-        
-    }
 }
 
 

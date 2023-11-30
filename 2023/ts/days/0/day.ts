@@ -5,10 +5,9 @@ class Day0 extends Day {
     constructor(){
         super(__dirname)
     }
-
-    solve(){
-        
-    }
+    
+    override solveP1(): void {}
+    override solveP2(): void {}
 }
 
 
