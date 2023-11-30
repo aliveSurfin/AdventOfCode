@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { DAYS_PATH } from './consts';
 
 export class Day {
 
@@ -9,17 +10,13 @@ export class Day {
 
     readFile(day : String, useTestInput = false) : String{
 
-        let path = useTestInput ? `./${day}/test.txt`: `./${day}/input.txt`;
+        let path = useTestInput ? `${DAYS_PATH}${day}/test.txt`: `${DAYS_PATH}${day}/input.txt`;
         return fs.readFileSync(path,'utf8')
-        // console.log(this.input)
     }
-
-    createListOfStrings() {
-    }
+    
     constructor(day: String, useTestInput = false){
         this.input = this.readFile(day, useTestInput)
         console.log(`Using test input? ${useTestInput? "Yes" : "No"}`)
-        console.log("input: ", this.input)
         this.listOfStrings = this.input.split("\n")
         this.listOfNumbers = this.listOfStrings.map((e) => { return parseInt(e)})
         console.log(this)

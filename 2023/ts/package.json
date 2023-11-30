@@ -7,6 +7,6 @@
     },
 
     "scripts": {
-        "day": "ts-node ./day$DAY/day.ts"
+        "day": "ts-node ./days/day$DAY/day.ts"
     }
 }

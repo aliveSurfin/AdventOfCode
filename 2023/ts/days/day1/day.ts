@@ -1,4 +1,4 @@
-import { Day } from "../day";
+import { Day } from "../../day";
 class Day1 extends Day {
 
 
