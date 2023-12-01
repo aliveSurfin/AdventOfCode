@@ -38,5 +38,8 @@ export class Day {
     solve(){
         this.solveP1()
         this.solveP2()
+
+        console.log("p1: ", this.p1);
+        console.log("p2: ", this.p2);
     }
 }
