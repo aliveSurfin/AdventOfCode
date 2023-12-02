@@ -36,6 +36,8 @@ class Day1 extends Day {
         return parseInt(`${e.match(/\d/)}${this.reverse(e).match(/\d/)}`);
       })
       .reduce(this.sum);
+
+      this.assert(56397 == this.p1)
   }
 
   override solveP2(): void {
@@ -53,6 +55,8 @@ class Day1 extends Day {
         return parseInt(`${first}${last}`);
       })
       .reduce(this.sum);
+
+      this.assert(55701 == this.p2)
 
   }
 }
