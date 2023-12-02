@@ -25,9 +25,7 @@ class Day1 extends Day {
     return inputString;
   }
 
-  sum(acc: any, val: any) {
-    return acc + val;
-  }
+  
   reverse(s: string): string {
     return s.split("").reverse().join("");
   }

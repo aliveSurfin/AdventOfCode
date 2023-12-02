@@ -18,6 +18,10 @@ export class Day {
         return fs.readFileSync(path,'utf8')
     }
 
+    sum(acc: any, val: any) {
+        return acc + val;
+      }
+
     constructor(day: string, useTestInput = false){
         console.log(`\nDay ${day.split("/").at(-1)}`)
         this.useTestInput = useTestInput
