@@ -1,4 +1,6 @@
 import { Day } from "../../day";
+import * as assert from 'assert'
+
 class Day2 extends Day {
   constructor() {
     super(__dirname);
@@ -26,7 +28,7 @@ class Day2 extends Day {
         }
       })
       this.p1 = possible;
-      this.assert(this.p1 == 2617)
+      assert(this.p1 == 2617)
   }
 
 
@@ -61,7 +63,7 @@ class Day2 extends Day {
     })
     
     this.p2 = sum
-    this.assert(this.p2 == 59795)
+    assert(this.p2 == 59795)
   }
 }
 

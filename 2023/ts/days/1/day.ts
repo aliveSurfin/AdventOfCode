@@ -1,4 +1,6 @@
 import { Day } from "../../day";
+import * as assert from 'assert'
+
 class Day1 extends Day {
   constructor() {
     super(__dirname);
@@ -37,7 +39,7 @@ class Day1 extends Day {
       })
       .reduce(this.sum);
 
-      this.assert(56397 == this.p1)
+      assert(56397 == this.p1)
   }
 
   override solveP2(): void {
@@ -56,7 +58,7 @@ class Day1 extends Day {
       })
       .reduce(this.sum);
 
-      this.assert(55701 == this.p2)
+      assert(55701 == this.p2)
 
   }
 }

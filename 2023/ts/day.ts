@@ -26,13 +26,6 @@ export class Day {
         this.listOfNumbers = this.listOfStrings.map((e) => { return parseInt(e)})
     }
 
-    assert(condition : boolean) {
-        if(!condition) {
-            throw new Error(`Expected condition ${condition} to be true`)
-        }
-    }
-
-
     solveP1(){
         console.log("p1 not solved")
     }
