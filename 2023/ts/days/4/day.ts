@@ -1,12 +1,18 @@
 import { Day } from "../../day";
 import assert from "assert";
+type Cards = {
+  [name: string]: {
+    copies: number;
+    children: number[];
+  };
+};
 
 class Day4 extends Day {
   constructor() {
     super(__dirname);
   }
 
-  cards :any = {}
+  cards : Cards = {}
   override solveP1(): void {
     let sum =0
     this.listOfStrings.forEach((card) => {
@@ -35,7 +41,6 @@ class Day4 extends Day {
       }
     })
 
-    //@ts-ignore
     this.p2 = Object.values(this.cards).map((c) => {return c.copies}).reduce(this.sum)
 
     assert(this.p2 == 9496801)
