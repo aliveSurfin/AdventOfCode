@@ -1,7 +1,5 @@
-import { lstat } from "fs";
 import { Day } from "../../day";
 import assert from "assert";
-import { exit } from "process";
 
 type DSR = {
   destination: number;
@@ -9,6 +7,14 @@ type DSR = {
   range: number;
 };
 class Day5 extends Day {
+
+    seedToSoil: DSR[] = []
+    soilToFertilizer: DSR[] = []
+    fertilizerToWater: DSR[] = []
+    waterToLight: DSR[] = []
+    lightToTemperature: DSR[] = []
+    temperatureToHumidity: DSR[] = []
+    humidityToLocation: DSR[] = []
   constructor() {
     super(__dirname);
   }
@@ -49,11 +55,7 @@ class Day5 extends Day {
     return sourceNo;
   }
 
-  getBackwardsFromMap(maps: DSR[], destinationNo: number | null) {
-    if(destinationNo == null){
-      return null
-    }
-    // console.log(maps, destinationNo)
+  getBackwardsFromMap(maps: DSR[], destinationNo: number) {
     for (let x = 0; x < maps.length; x++) {
       let curMap = maps[x];
       if (
@@ -63,8 +65,7 @@ class Day5 extends Day {
         return curMap.source + (destinationNo - curMap.destination);
       }
     }
-    return destinationNo
-
+    return destinationNo;
   }
   override solveP1(): void {
     let split = this.input.split("\n\n");
@@ -72,50 +73,38 @@ class Day5 extends Day {
       .split(": ")[1]
       .split(" ")
       .map((e) => parseInt(e));
-    let seedToSoil = this.mergeAllMaps(split[1]);
-    let soilToFertilizer = this.mergeAllMaps(split[2]);
-    let fertilizerToWater = this.mergeAllMaps(split[3]);
-    let waterToLight = this.mergeAllMaps(split[4]);
-    let lightToTemperature = this.mergeAllMaps(split[5]);
-    let temperatureToHumidity = this.mergeAllMaps(split[6]);
-    let humidityToLocation = this.mergeAllMaps(split[7]);
+    this.seedToSoil = this.mergeAllMaps(split[1]);
+    this.soilToFertilizer = this.mergeAllMaps(split[2]);
+    this.fertilizerToWater = this.mergeAllMaps(split[3]);
+    this.waterToLight = this.mergeAllMaps(split[4]);
+    this.lightToTemperature = this.mergeAllMaps(split[5]);
+    this.temperatureToHumidity = this.mergeAllMaps(split[6]);
+    this.humidityToLocation = this.mergeAllMaps(split[7]);
 
     let locations = seeds.map((seed) => {
-      let soil = this.getFromMap(seedToSoil, seed);
-      let fertilizer = this.getFromMap(soilToFertilizer, soil);
-      let water = this.getFromMap(fertilizerToWater, fertilizer);
-      let light = this.getFromMap(waterToLight, water);
-      let temperature = this.getFromMap(lightToTemperature, light);
-      let humdity = this.getFromMap(temperatureToHumidity, temperature);
-      let location = this.getFromMap(humidityToLocation, humdity);
-      console.log(
-        seed,
-        soil,
-        fertilizer,
-        water,
-        light,
-        temperature,
-        humdity,
-        location
-      );
+      let soil = this.getFromMap(this.seedToSoil, seed);
+      let fertilizer = this.getFromMap(this.soilToFertilizer, soil);
+      let water = this.getFromMap(this.fertilizerToWater, fertilizer);
+      let light = this.getFromMap(this.waterToLight, water);
+      let temperature = this.getFromMap(this.lightToTemperature, light);
+      let humdity = this.getFromMap(this.temperatureToHumidity, temperature);
+      let location = this.getFromMap(this.humidityToLocation, humdity);
       return location;
     });
 
     this.p1 = Math.min(...locations);
-    // assert(this.p1 == 322500873);
+    assert(this.p1 == 322500873);
   }
 
-
-  seedInRange(seedMap: any[], seedNo: number){
-    // console.log("seedMap", seedMap)
-    for(let x=0; x<seedMap.length; x++){
-      if(seedNo <= seedMap[x].end && seedNo >= seedMap[x].start){
-        console.log("hit")
-        return true
+  seedInRange(seedMap: any[], seedNo: number) {
+    for (let x = 0; x < seedMap.length; x++) {
+      if (seedNo <= seedMap[x].end && seedNo >= seedMap[x].start) {
+        return true;
       }
     }
-    return false
+    return false;
   }
+
   override solveP2(): void {
     let split = this.input.split("\n\n");
     let seeds = split[0]
@@ -124,79 +113,31 @@ class Day5 extends Day {
       .map((e) => parseInt(e));
 
     //@ts-ignore
-    let seedMap = []
+    let seedMap = [];
 
-    for(let x=0; x<seeds.length; x+=2){
+    for (let x = 0; x < seeds.length; x += 2) {
       //@ts-ignore
-      seedMap.push({start: seeds[x], end: seeds[x] + (seeds[x+1]-1)})
+      seedMap.push({ start: seeds[x], end: seeds[x] + (seeds[x + 1] - 1) });
     }
-    console.log(seedMap)
-    let seedToSoil = this.mergeAllMaps(split[1]);
-    let soilToFertilizer = this.mergeAllMaps(split[2]);
-    let fertilizerToWater = this.mergeAllMaps(split[3]);
-    let waterToLight = this.mergeAllMaps(split[4]);
-    let lightToTemperature = this.mergeAllMaps(split[5]);
-    let temperatureToHumidity = this.mergeAllMaps(split[6]);
-    let humidityToLocation = this.mergeAllMaps(split[7]);
 
-    let all = {
-      seeds,
-      seedToSoil,
-      soilToFertilizer,
-      fertilizerToWater,
-      waterToLight,
-      lightToTemperature,
-      temperatureToHumidity,
-      humidityToLocation,
-    };
+    let location = -1
+    while (true) {
+      location++;
+      let humdity = this.getBackwardsFromMap(this.humidityToLocation, location);
+      let temperature = this.getBackwardsFromMap(this.temperatureToHumidity,humdity);
+      let light = this.getBackwardsFromMap(this.lightToTemperature, temperature);
+      let water = this.getBackwardsFromMap(this.waterToLight, light);
+      let fertilizer = this.getBackwardsFromMap(this.fertilizerToWater, water);
+      let soil = this.getBackwardsFromMap(this.soilToFertilizer, fertilizer);
+      let seed = this.getBackwardsFromMap(this.seedToSoil, soil);
 
-    // console.log(all)
+      if (this.seedInRange(seedMap, seed)) {
+        this.p2 = location;
 
-
-    let location = 43096871 -1
-    let a = true
-    while(true){
-      location++
-      console.log("location: ", location)
-      let humdity = this.getBackwardsFromMap(humidityToLocation, location)
-      if(humdity == null){
-        console.log(humdity)
-        continue
+        break;
       }
-      let temperature = this.getBackwardsFromMap(temperatureToHumidity, humdity)
-      if(temperature == null){
-        continue
-      }
-      let light = this.getBackwardsFromMap(lightToTemperature, temperature)
-      if(light == null){
-        continue
-      }
-      let water = this.getBackwardsFromMap(waterToLight, light)
-      if(water == null){
-        continue
-      }
-      let fertilizer = this.getBackwardsFromMap(fertilizerToWater, water)
-      if(fertilizer == null){
-        continue
-      }
-      let soil = this.getBackwardsFromMap(soilToFertilizer, fertilizer)
-      if(soil == null){
-        continue
-      }
-      let seed = this.getBackwardsFromMap(seedToSoil, soil)
-
-      if(seed != null && this.seedInRange(seedMap, seed)){
-        let all = {seed, soil, fertilizer, water, light, temperature, humdity, location}
-        console.log(all)
-        console.log(seed)
-        console.log(location)
-
-        
-      break;
-      }
-      // break;
-      
     }
+    assert(this.p2 == 108956227);
   }
 }
 
