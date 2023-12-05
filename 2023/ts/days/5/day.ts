@@ -6,6 +6,7 @@ type DSR = {
   source: number;
   range: number;
 };
+
 class Day5 extends Day {
 
     seedToSoil: DSR[] = []
@@ -15,40 +16,30 @@ class Day5 extends Day {
     lightToTemperature: DSR[] = []
     temperatureToHumidity: DSR[] = []
     humidityToLocation: DSR[] = []
+    seeds: number[] = []
   constructor() {
     super(__dirname);
   }
 
-  createMap(dsr: [number, number, number]): DSR[] {
+  createMap(dsr: number[]): DSR {
     let destination = dsr[0];
     let source = dsr[1];
     let range = dsr[2];
 
-    //@ts-ignore
-    return { destination, source, range };
+    return { destination, source, range } as unknown as DSR
   }
-  //@ts-ignore
-  mergeAllMaps(maps) {
-    //@ts-ignore
-    maps = maps.split(":\n")[1].split("\n").map((e) => e.split(" ").map((e) => parseInt(e)));
 
-    let allMaps: DSR[] = [];
-    //@ts-ignore
-    maps.forEach((e) => {
-      //@ts-ignore
-      allMaps.push(this.createMap(e));
+  makeAllMaps(maps: string) : DSR[] {
+    return maps.split(":\n")[1].split("\n").map((e) => e.split(" ").map((e) => parseInt(e))).map((e) => {
+      return this.createMap(e)
     });
-
-    return allMaps;
   }
 
-  getFromMap(maps: DSR[], sourceNo: number) {
+  getFromMaps(maps: DSR[], sourceNo: number) {
     for (let x = 0; x < maps.length; x++) {
       let curMap = maps[x];
-      if (
-        sourceNo >= curMap.source &&
-        sourceNo <= curMap.source + curMap.range - 1
-      ) {
+      if (sourceNo >= curMap.source && sourceNo <= curMap.source + curMap.range - 1)
+      {
         return curMap.destination + (sourceNo - curMap.source);
       }
     }
@@ -58,42 +49,12 @@ class Day5 extends Day {
   getBackwardsFromMap(maps: DSR[], destinationNo: number) {
     for (let x = 0; x < maps.length; x++) {
       let curMap = maps[x];
-      if (
-        destinationNo >= curMap.destination &&
-        destinationNo <= curMap.destination + curMap.range - 1
-      ) {
+      if (destinationNo >= curMap.destination && destinationNo <= curMap.destination + curMap.range - 1)
+      {
         return curMap.source + (destinationNo - curMap.destination);
       }
     }
     return destinationNo;
-  }
-  override solveP1(): void {
-    let split = this.input.split("\n\n");
-    let seeds = split[0]
-      .split(": ")[1]
-      .split(" ")
-      .map((e) => parseInt(e));
-    this.seedToSoil = this.mergeAllMaps(split[1]);
-    this.soilToFertilizer = this.mergeAllMaps(split[2]);
-    this.fertilizerToWater = this.mergeAllMaps(split[3]);
-    this.waterToLight = this.mergeAllMaps(split[4]);
-    this.lightToTemperature = this.mergeAllMaps(split[5]);
-    this.temperatureToHumidity = this.mergeAllMaps(split[6]);
-    this.humidityToLocation = this.mergeAllMaps(split[7]);
-
-    let locations = seeds.map((seed) => {
-      let soil = this.getFromMap(this.seedToSoil, seed);
-      let fertilizer = this.getFromMap(this.soilToFertilizer, soil);
-      let water = this.getFromMap(this.fertilizerToWater, fertilizer);
-      let light = this.getFromMap(this.waterToLight, water);
-      let temperature = this.getFromMap(this.lightToTemperature, light);
-      let humdity = this.getFromMap(this.temperatureToHumidity, temperature);
-      let location = this.getFromMap(this.humidityToLocation, humdity);
-      return location;
-    });
-
-    this.p1 = Math.min(...locations);
-    assert(this.p1 == 322500873);
   }
 
   seedInRange(seedMap: any[], seedNo: number) {
@@ -105,19 +66,40 @@ class Day5 extends Day {
     return false;
   }
 
-  override solveP2(): void {
+  override solveP1(): void {
     let split = this.input.split("\n\n");
-    let seeds = split[0]
-      .split(": ")[1]
-      .split(" ")
-      .map((e) => parseInt(e));
+    this.seeds = split[0].split(": ")[1].split(" ").map((e) => parseInt(e));
+    this.seedToSoil = this.makeAllMaps(split[1]);
+    this.soilToFertilizer = this.makeAllMaps(split[2]);
+    this.fertilizerToWater = this.makeAllMaps(split[3]);
+    this.waterToLight = this.makeAllMaps(split[4]);
+    this.lightToTemperature = this.makeAllMaps(split[5]);
+    this.temperatureToHumidity = this.makeAllMaps(split[6]);
+    this.humidityToLocation = this.makeAllMaps(split[7]);
 
-    //@ts-ignore
-    let seedMap = [];
+    let locations = this.seeds.map((seed) => {
+      let soil = this.getFromMaps(this.seedToSoil, seed);
+      let fertilizer = this.getFromMaps(this.soilToFertilizer, soil);
+      let water = this.getFromMaps(this.fertilizerToWater, fertilizer);
+      let light = this.getFromMaps(this.waterToLight, water);
+      let temperature = this.getFromMaps(this.lightToTemperature, light);
+      let humdity = this.getFromMaps(this.temperatureToHumidity, temperature);
+      let location = this.getFromMaps(this.humidityToLocation, humdity);
+      return location;
+    });
 
-    for (let x = 0; x < seeds.length; x += 2) {
-      //@ts-ignore
-      seedMap.push({ start: seeds[x], end: seeds[x] + (seeds[x + 1] - 1) });
+    this.p1 = Math.min(...locations);
+    assert(this.p1 == 322500873);
+  }
+
+  
+
+  override solveP2(): void {
+    
+    let seedMap : {start: number, end: number}[] = []
+
+    for (let x = 0; x < this.seeds.length; x += 2) {
+      seedMap.push({ start: this.seeds[x], end: this.seeds[x] + (this.seeds[x + 1] - 1) });
     }
 
     let location = -1
