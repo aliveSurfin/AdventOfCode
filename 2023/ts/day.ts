@@ -22,6 +22,17 @@ export class Day {
         return acc + val;
       }
 
+    multiply(acc:any, val:any) {
+       return acc * val
+    }
+
+    arrayRange(start: number, stop: number, step: number){
+        return Array.from(
+          { length: (stop - start) / step + 1 },
+          (value, index) => start + index * step
+        );
+      }
+
     constructor(day: string, useTestInput = false){
         console.log(`\nDay ${day.split("/").at(-1)}`)
         this.useTestInput = useTestInput
