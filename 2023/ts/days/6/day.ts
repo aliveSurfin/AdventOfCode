@@ -10,33 +10,46 @@ class Day6 extends Day {
   times: number[] = []
   distances: number[] = []
 
-  solveRace(time: number, distance: number){
-    let curPossible = 0
-      let range = this.arrayRange(1, time - 1, 1)
-      range.forEach((r) => {
-        if ((r * (time - r)) > distance) {
-          curPossible++
-        }
-      })
-      return curPossible
+  solveRace(time: number, distance: number) {
+    let lowerLimit = 0
+    let upperLimit = 0
+
+    for (let i = 1; i < time; i++) {
+      if (i * (time - i) > distance) {
+        lowerLimit = i
+        break;
+      }
+    }
+
+    for (let i = time - 1; i--; i > lowerLimit) {
+      if (i * (time - i) > distance) {
+        upperLimit = i
+        break;
+      }
+    }
+    return upperLimit - lowerLimit + 1
+
   }
 
   override solveP1(): void {
     this.times = this.listOfStrings[0].split(":")[1].trim().split(/\s+/).map(e => parseInt(e))
     this.distances = this.listOfStrings[1].split(":")[1].trim().split(/\s+/).map(e => parseInt(e))
-    let possible: number[] = []
-    this.times.forEach((t, i) => {
-      possible.push(this.solveRace(t, this.distances[i]))
+
+    let possible = this.times.map((t, i) => {
+      return (this.solveRace(t, this.distances[i]))
     })
+
     this.p1 = possible.reduce(this.multiply)
+    assert(this.p1 == 1312850)
   }
 
 
 
   override solveP2(): void {
-    let time = parseInt( this.times.map(e=> `${e}`).join(''))
-    let distance= parseInt( this.distances.map(e=> `${e}`).join(''))
+    let time = parseInt(this.times.map(e => `${e}`).join(''))
+    let distance = parseInt(this.distances.map(e => `${e}`).join(''))
     this.p2 = this.solveRace(time, distance)
+    assert(this.p2 == 36749103)
   }
 }
 
