@@ -1,5 +1,6 @@
 import { Day } from "../../day";
 import assert from "assert";
+
 enum Rank {
   NOTHING = 0,
   PAIR,
@@ -9,108 +10,37 @@ enum Rank {
   QUADS,
   QUINTS,
 }
-function compareCardP1(card1: string, card2: string) {
-  let cardRanks = [
-    "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2",
-  ];
-  let index1 = cardRanks.indexOf(card1);
-  let index2 = cardRanks.indexOf(card2);
-  if (index1 > index2) {
-    return -1;
-  }
-  if (index2 > index1) {
-    return 1;
-  }
 
-  return 0;
+type Hand = {
+  hand: HandOccs,
+  handOriginal: string[],
+  bid: number
 }
 
-function handRankP1(hand: any) {
-  let values = Object.values(hand)
-  //@ts-ignore
-  let maxOcc = Math.max(...values)
-
-  if(maxOcc == 5) {
-    return Rank.QUINTS
+type HandOccs = {
+  [card: string] :{
+    count: number}
   }
-
-  if(maxOcc == 4) {
-    return Rank.QUADS
-  }
-
-  if(maxOcc == 3) {
-    if(values.length == 2){
-      return Rank.FULL_HOUSE
-    }
-    return Rank.TRIPS
-  }
-
-  if(maxOcc == 2) {
-    if(values.length == 3) {
-      return Rank.TWO_PAIR
-    }
-    return Rank.PAIR
-  }
-
-  return Rank.NOTHING
-}
-
-function compareCardP2(card1: string, card2: string) {
-  let cardRanks = [
-    "A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J",
-  ];
-  let index1 = cardRanks.indexOf(card1);
-  let index2 = cardRanks.indexOf(card2);
-  if (index1 > index2) {
-    return -1;
-  }
-  if (index2 > index1) {
-    return 1;
-  }
-
-  return 0;
-}
-function handRankP2(hand: any) {
-  let numberOfJokers = hand.J
-  if( numberOfJokers == null){
-    return handRankP1(hand)
-  }
-  let values = Object.values(hand)
-  //@ts-ignore
-  let maxOcc = Math.max(...values)
-  
-  if(maxOcc >= 4) {
-    return Rank.QUINTS // quints already quints // quads can always move to quints // JJJJ2 -> 22222 // J2222 -> 22222
-  }
-
-  if(maxOcc == 3) {
-    if(values.length == 2){
-      return Rank.QUINTS // fh can always move to quints // JJKKK -> KKKKK // KKJJJ -> KKKKK
-    }
-    return Rank.QUADS // trips can always move to quads // JJJAK -> AAAAK // AAAJK -> AAAAK -> // KKKAJ -> KKKKA
-  }
-
-  if(maxOcc == 2) {
-    if(values.length == 3) {
-      if(numberOfJokers== 2){ // JJ KK A -> KKKKA // KK AA J 
-          return Rank.QUADS
-      }else{
-        return Rank.FULL_HOUSE
-      }
-    }
-    return Rank.TRIPS // JJAKQ -> AAA // AAJKQ -> AAAKQ
-  }
-
-  return Rank.PAIR // can always move to pair
-}
-
 
 class Day7 extends Day {
+  hands : Hand[] = []
+
   constructor() {
     super(__dirname);
+
+    this.hands = this.listOfStrings.map((e) => {
+      let split = e.split(" ");
+      let hand = split[0].split("").reduce((acc, chr) => {
+        //@ts-ignore
+        acc[chr] = (acc[chr] || 0) + 1;
+        return acc;
+      }, {});
+      return {
+        hand, handOriginal: split[0].split(""), bid: parseInt(split[1].trim())};
+    })
   }
 
-  compareHandP1(hand1: any, hand2: any) {
+  compareHandP1(hand1: Hand, hand2: Hand) {
     let hand1Rank = handRankP1(hand1.hand);
     let hand2Rank = handRankP1(hand2.hand)
     if(hand1Rank > hand2Rank) {
@@ -132,10 +62,9 @@ class Day7 extends Day {
       return compareCardP1(curHand1, curHand2)
     }
     return 0;
-
   }
 
-  compareHandP2(hand1: any, hand2: any) {
+  compareHandP2(hand1: Hand, hand2: Hand) {
     let hand1Rank = handRankP2(hand1.hand);
     let hand2Rank = handRankP2(hand2.hand)
     if(hand1Rank > hand2Rank) {
@@ -160,50 +89,80 @@ class Day7 extends Day {
 
   }
 
- 
-
   override solveP1(): void {
-
-    let hands = this.listOfStrings.map((e) => {
-      let split = e.split(" ");
-      let hand = split[0].split("").reduce((acc, chr) => {
-        //@ts-ignore
-        acc[chr] = (acc[chr] || 0) + 1;
-        return acc;
-      }, {});
-      return {
-        hand,     handOriginal: split[0].split(""),     bid: parseInt(split[1].trim()),   };
-    }).sort(this.compareHandP1)
-
-    this.p1 = hands.map((e, i)=>{
+    this.p1 = this.hands.sort(this.compareHandP1).map((e, i)=>{
       return e.bid * (i+1)
     }).reduce(this.sum)
     assert(this.p1 == 248453531)
   }
 
   override solveP2(): void {
-
-    let hands = this.listOfStrings.map((e) => {
-      let split = e.split(" ");
-      let hand = split[0].split("").reduce((acc, chr) => {
-        //@ts-ignore
-        acc[chr] = (acc[chr] || 0) + 1;
-        return acc;
-      }, {});
-      return {
-        hand, handOriginal: split[0].split(""), bid: parseInt(split[1].trim())
-      };
-    }).sort(this.compareHandP2)
-
-    this.p2 = hands.map((e, i)=>{
+    this.p2 = this.hands.sort(this.compareHandP2).map((e, i)=>{
       return e.bid * (i+1)
     }).reduce(this.sum)
-
     assert(this.p2 == 248781813)
-
   }
-
-
 }
 
 new Day7().solve();
+
+
+function compareCardP1(card1: string, card2: string) {
+  let cardRanks = [
+    "A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2",
+  ];
+  let index1 = cardRanks.indexOf(card1);
+  let index2 = cardRanks.indexOf(card2);
+  if (index1 > index2) {
+    return -1;
+  }
+  if (index2 > index1) {
+    return 1;
+  }
+
+  return 0;
+}
+
+function handRankP1(hand: HandOccs) {
+  let values = Object.values(hand)
+  //@ts-ignore
+  let maxOcc = Math.max(...values)
+  return maxOcc == 5 ? Rank.QUINTS : maxOcc == 4 ? Rank.QUADS 
+  : maxOcc == 3 ? values.length == 2 ? Rank.FULL_HOUSE : Rank.TRIPS 
+  : maxOcc == 2 ? values.length == 3 ? Rank.TWO_PAIR : Rank.PAIR 
+  : Rank.NOTHING
+}
+
+function compareCardP2(card1: string, card2: string) {
+  let cardRanks = [
+    "A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J",
+  ];
+  let index1 = cardRanks.indexOf(card1);
+  let index2 = cardRanks.indexOf(card2);
+  if (index1 > index2) {
+    return -1;
+  }
+  if (index2 > index1) {
+    return 1;
+  }
+
+  return 0;
+}
+function handRankP2(hand: HandOccs) {
+  let numberOfJokers = hand.J as unknown as number
+  if( numberOfJokers == null){
+    return handRankP1(hand)
+  }
+  let values = Object.values(hand)
+  //@ts-ignore
+  let maxOcc = Math.max(...values)
+
+  return maxOcc == 5 ? Rank.QUINTS : maxOcc == 4 ? Rank.QUINTS // quints already quints // quads can always move to quints // JJJJ2 -> 22222 // J2222 -> 22222
+  : maxOcc == 3 ? values.length == 2 
+    ? Rank.QUINTS // fh can always move to quints // JJKKK -> KKKKK // KKJJJ -> KKKKK
+    : Rank.QUADS  // trips can always move to quads // JJJAK -> AAAAK // AAAJK -> AAAAK -> // KKKAJ -> KKKKA
+  : maxOcc == 2 ? values.length == 3 
+    ? numberOfJokers == 2 ? Rank.QUADS : Rank.FULL_HOUSE // two pair can move to quads or full house depending on number of jokers // JJ KK A -> KKKKA // KK AA J -> AAAKK 
+    : Rank.TRIPS // pair can move to trips
+  : Rank.PAIR // high card can move to pair
+}
