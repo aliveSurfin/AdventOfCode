@@ -22,7 +22,6 @@ class Day8 extends Day {
       r.pop()
       let node = {L: l.join(""), R: r.join("")}
       this.nodes[split[0]] = node
-      // this.nodes[split[0]] = {L: l, R: r}
     })
   }
 
