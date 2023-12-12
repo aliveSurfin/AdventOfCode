@@ -6,6 +6,9 @@ type Point = {
   y: number;
   parent: Point | null;
   char: string;
+  f: number,
+  g: number,
+  h: number
 };
 
 class Day11 extends Day {
@@ -48,10 +51,11 @@ class Day11 extends Day {
   rows: boolean[] = []
   grid: string[][] = [];
 
-  safeAddToList(
+  getItemSafely(
     point: Point,
     deltaX: number,
-    deltaY: number
+    deltaY: number,
+    end : Point
   ): Point | null {
     let x = point.x + deltaX;
     let y = point.y + deltaY;
@@ -60,12 +64,19 @@ class Day11 extends Day {
       if (char == undefined) {
         return null;
       }
-      return {
+
+      let obj = {
         x: x,
         y: y,
         parent: point,
         char,
+        f: 0,
+        g: point.g+1,
+        h: 0
       };
+      obj.h = this.manhattan(obj, end)
+      obj.f = obj.g+obj.h
+      return obj
     } catch {
       return null;
     }
@@ -77,24 +88,14 @@ class Day11 extends Day {
     return dist;
   }
 
+  sortByF = (a:Point,b:Point) => { return a.f<b.f ? 1 : a.f> b.f ? -1 : 0}
   pathfind(start: Point, end: Point) {
     let closed: { [id: string]: Point } = {};
     let open: Point[] = [];
     open.push(start);
     let found: Point | null = null;
     while (open.length > 0) {
-      open = open.sort((a, b) => {
-        let manA = this.manhattan(a, end);
-        let manB = this.manhattan(b, end);
-        if (manA < manB) {
-          return 1;
-        }
-
-        if (manA > manB) {
-          return -1;
-        }
-        return 0;
-      });
+      open.sort(this.sortByF)
       //@ts-ignore
       let cur: Point = open.pop()
       closed[`${cur.x}-${cur.y}`] = cur;
@@ -110,7 +111,7 @@ class Day11 extends Day {
         [0, 1],
       ];
       directions.forEach((e) => {
-        let dirSafe = this.safeAddToList(cur, e[0], e[1]);
+        let dirSafe = this.getItemSafely(cur, e[0], e[1], end);
         if (dirSafe != null) {
           adj.push(dirSafe);
         }
@@ -129,7 +130,7 @@ class Day11 extends Day {
     this.grid.forEach((row, y) => {
       row.forEach((item, x) => {
         if (item == "#") {
-          planets.push({ x, y, parent: null, char: "#" });
+          planets.push({ x, y, parent: null, char: "#" , f:0, g:0, h:0});
         }
       });
     });
@@ -142,7 +143,7 @@ class Day11 extends Day {
         let id = `${Math.min(a + 1, b + 1)} ${Math.max(a + 1, b + 1)}`
         if (
           a != b 
-          && dists[id] !== null
+          && dists[id] == null
         ) {
           let found = this.pathfind(planetA, planetB);
           let expanded = 0
@@ -162,8 +163,8 @@ class Day11 extends Day {
     };
     this.p1 = Object.values(dists).reduce(this.sum);
     this.p2 = Object.values(dists2).reduce(this.sum);
-    // assert(this.p1 == 10490062)
-    // assert(this.p2 == 382979724122)
+    assert(this.p1 == 10490062)
+    assert(this.p2 == 382979724122)
   }
 
   override solveP2(): void {}
