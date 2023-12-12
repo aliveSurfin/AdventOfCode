@@ -7,20 +7,6 @@ type Point = {
 };
 
 class Day11 extends Day {
-  printGrid() {
-    console.log(
-      "  " +
-        this.cols
-          .map((e) => {
-            return e == true ? " " : "v";
-          })
-          .join(" ")
-    );
-    for (let y = 0; y < this.rows.length; y++) {
-      console.log(`${this.rows[y] ? " " : ">"} ${this.grid[y].join(" ")}`);
-    }
-  }
-
   constructor() {
     super(__dirname);
 
