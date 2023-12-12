@@ -9,38 +9,34 @@ type Point = {
 };
 
 class Day11 extends Day {
-  clone(point: Point) {
-    return {
-      x: point.x,
-      y: point.y,
-      parent: point.parent,
-      char: point.char,
-    };
+  printGrid(){
+    console.log("  " + this.cols.map((e) => {return e==true ? " " : "v"}).join(" "))
+    for(let y=0; y< this.rows.length; y++){
+      console.log(`${this.rows[y]? " " : ">"} ${this.grid[y].join(" ")}`)
+    }
   }
+
   constructor() {
-    super(__dirname, true);
+    super(__dirname);
 
     this.grid = this.listOfStrings.map((e) => e.split(""));
-
-    let cols: boolean[] = new Array(this.grid[0].length).fill(false);
-    let rows: boolean[] = new Array(this.grid.length).fill(false);
+    this.cols = new Array(this.grid[0].length).fill(false);
+    this.rows = new Array(this.grid.length).fill(false);
 
     this.grid.forEach((row, y) => {
       row.forEach((item, x) => {
         if (item == "#") {
-          cols[x] = true;
-          rows[y] = true;
+          this.cols[x] = true;
+          this.rows[y] = true;
         }
       });
     });
-    let added = 0;
-    rows.forEach((hasPlanet, i) => {
+    this.rows.forEach((hasPlanet, i) => {
       if (!hasPlanet) {
         this.grid[i] = new Array(this.grid[i].length).fill("*");
       }
     });
-    added = 0;
-    cols.forEach((hasPlanet, i) => {
+    this.cols.forEach((hasPlanet, i) => {
       if (!hasPlanet) {
         for (let y = 0; y < this.grid.length; y++) {
           this.grid[y][i] = "*";
@@ -48,7 +44,8 @@ class Day11 extends Day {
       }
     });
   }
-
+  cols: boolean[] = []
+  rows: boolean[] = []
   grid: string[][] = [];
 
   safeAddToList(
@@ -85,23 +82,21 @@ class Day11 extends Day {
     let open: Point[] = [];
     open.push(start);
     let found: Point | null = null;
-    let iterations = 0;
     while (open.length > 0) {
       open = open.sort((a, b) => {
         let manA = this.manhattan(a, end);
         let manB = this.manhattan(b, end);
-
         if (manA < manB) {
-          return -1;
+          return 1;
         }
 
         if (manA > manB) {
-          return 1;
+          return -1;
         }
         return 0;
       });
       //@ts-ignore
-      let cur: Point = open.shift();
+      let cur: Point = open.pop()
       closed[`${cur.x}-${cur.y}`] = cur;
       if (cur.x == end.x && cur.y == end.y) {
         found = cur;
@@ -121,7 +116,7 @@ class Day11 extends Day {
         }
       });
       adj.forEach((e) => {
-        if (closed[`${cur.x}-${cur.y}`] != null) {
+        if (closed[`${e.x}-${e.y}`] == undefined) {
           open.push(e);
         }
       });
@@ -140,13 +135,14 @@ class Day11 extends Day {
     });
     let dists: { [name: string]: number } = {};
     let dists2: { [name: string]: number } = {};
-    planets.forEach((planetA, a) => {
-      console.log(a)
-      planets.forEach((planetB, b) => {
+    for(let a=0; a<planets.length; a++){
+      let planetA = planets[a]
+      for(let b=0; b<planets.length; b++){
+        let planetB = planets[b]
         let id = `${Math.min(a + 1, b + 1)} ${Math.max(a + 1, b + 1)}`
         if (
-          a != b &&
-          dists[id] !== null
+          a != b 
+          && dists[id] !== null
         ) {
           let found = this.pathfind(planetA, planetB);
           let expanded = 0
@@ -160,13 +156,14 @@ class Day11 extends Day {
             found = found.parent;
           }
           dists[id] = (expanded * 2) + other
-          dists2[id] = (expanded* 10) + other
+          dists2[id] = (expanded* 1000000) + other
         }
-      });
-    });
-    console.log()
+      };
+    };
     this.p1 = Object.values(dists).reduce(this.sum);
     this.p2 = Object.values(dists2).reduce(this.sum);
+    // assert(this.p1 == 10490062)
+    // assert(this.p2 == 382979724122)
   }
 
   override solveP2(): void {}
