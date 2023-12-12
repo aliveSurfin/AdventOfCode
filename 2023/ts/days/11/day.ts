@@ -30,8 +30,8 @@ class Day11 extends Day {
   planets: Point[] = [];
 
   override solveP1(): void {
-    let dists: { [name: string]: number } = {};
-    let dists2: { [name: string]: number } = {};
+    let dists: { [name: string]: boolean } = {};
+    let dists2: { [name: string]: boolean } = {};
     for (let a = 0; a < this.planets.length; a++) {
       let planetA = this.planets[a];
       for (let b = 0; b < this.planets.length; b++) {
@@ -70,13 +70,13 @@ class Day11 extends Day {
               }
             }
           }
-          dists[id] = expanded * 2 + other;
-          dists2[id] = expanded * 1000000 + other;
+          dists[id] = false
+          dists2[id] = false
+          this.p1 += (expanded * 2) + other;
+          this.p2 += (expanded * 1000000) + other;
         }
       }
     }
-    this.p1 = Object.values(dists).reduce(this.sum);
-    this.p2 = Object.values(dists2).reduce(this.sum);
     assert(this.p1 == 10490062);
     assert(this.p2 == 382979724122);
   }
