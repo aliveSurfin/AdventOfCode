@@ -31,7 +31,6 @@ class Day11 extends Day {
 
   override solveP1(): void {
     let dists: { [name: string]: boolean } = {};
-    let dists2: { [name: string]: boolean } = {};
     for (let a = 0; a < this.planets.length; a++) {
       let planetA = this.planets[a];
       for (let b = 0; b < this.planets.length; b++) {
@@ -71,7 +70,6 @@ class Day11 extends Day {
             }
           }
           dists[id] = false
-          dists2[id] = false
           this.p1 += (expanded * 2) + other;
           this.p2 += (expanded * 1000000) + other;
         }
