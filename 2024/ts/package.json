@@ -9,6 +9,6 @@
     },
     "scripts": {
         "day": "tsx ./days/$DAY/day.ts",
-        "all": "for d in days/*/ ; do tsx $d/day.ts; done"
+        "all": "for d in days/*/ ; do if [ \"$d\" != \"days/00/\" ]; then tsx $d/day.ts; fi; done"
     }
 }

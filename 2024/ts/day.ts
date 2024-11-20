@@ -58,13 +58,25 @@ export class Day {
   }
 
   solve() {
-    const start = performance.now();
+    
+    const p1Start = performance.now();
     this.solveP1();
+    const p1End = performance.now();
+    
+    const p2Start = performance.now();
     this.solveP2();
-    const end = performance.now();
-
-    console.log("p1: ", this.p1);
-    console.log("p2: ", this.p2);
-    console.log("time taken: ", `${end - start} ms`);
+    const p2End = performance.now();
+    
+    const total = p1End - p1Start + p2End - p2Start;
+    if (this.p1 != null) {
+      console.log("p1: ", this.p1, `(${(p1End - p1Start).toFixed(4)} ms)`);
+    }
+    if (this.p2 != null) {
+      console.log("p2: ", this.p2, `(${(p2End - p2Start).toFixed(4)} ms)`);
+    }
+    if (this.p1 != null && this.p2 != null) {
+      console.log("total time taken: ", `${total.toFixed(4)} ms`);
+    }    
   }
+  
 }
