@@ -8,7 +8,7 @@
         "typescript": "^5.3.2"
     },
     "scripts": {
-        "day": "tsx ./days/$DAY/day.ts",
+        "day": "if [ -f ./days/$DAY/day.ts ]; then tsx ./days/$DAY/day.ts; else echo 'File ./days/$DAY/day.ts not found'; fi",
         "all": "for d in days/*/ ; do if [ \"$d\" != \"days/00/\" ]; then tsx $d/day.ts; fi; done"
     }
 }
