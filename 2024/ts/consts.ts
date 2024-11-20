@@ -1,0 +1,1 @@
+export const DAYS_PATH = "./days/"
