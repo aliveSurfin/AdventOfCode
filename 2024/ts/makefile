@@ -21,8 +21,10 @@ new%:
 			sed -i "s/Day0/Day$$DAY/g" ./days/$$DAY/day.ts; \
 			printf "\033[1;32mReplaced 'Day0' with 'Day$$DAY' in ./days/$$DAY/day.ts\033[0m\n"; \
 			printf "\033[1;34mhttps://adventofcode.com/2024/day/$$DAY\033[0m\n"; \
-			cmd.exe /C start "https://adventofcode.com/2024/day/$$DAY/input"; \
-			cmd.exe /C start "https://adventofcode.com/2024/day/$$DAY"; \
+			if [ -n "$$WSL_DISTRO_NAME" ]; then \
+				cmd.exe /C start "https://adventofcode.com/2024/day/$$DAY/input"; \
+				cmd.exe /C start "https://adventofcode.com/2024/day/$$DAY"; \
+			fi; \
 		else \
 			printf "\033[1;31mWarning: day.ts not found in ./days/$$DAY\033[0m\n"; \
 		fi \
