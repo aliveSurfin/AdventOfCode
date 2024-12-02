@@ -5,7 +5,6 @@ import assert from "assert";
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { log } from "console";
 
 //@ts-ignore
 const __filename = fileURLToPath(import.meta.url);
@@ -36,10 +35,10 @@ class Day02 extends Day {
         }
       }else {
         this.p1++;
-        this.p2++;
       }
     })
 
+    this.p2 = this.p1 + this.p2;
     assert(this.p1 == 524)
     assert(this.p2 == 569)
   }
@@ -49,38 +48,31 @@ class Day02 extends Day {
   }
 
   calculateSafe(report) {
-    let tooLarge = false;
     let hasNegative = false;
     let hasPositive = false;
-    let hasSame = false;
     
-    report.forEach((level, i)=> {
-      if(i != 0){
-        let diff = report[i-1] - level
+    for(let i=1; i<report.length; i++) {
+      
+      let diff = report[i-1] - report[i]
 
-        if(diff == 0) {
-          hasSame = true;
-        }
-        if(diff < 0 ) {
-          hasNegative = true;
-        }
-        if(diff > 0 ) {
-          hasPositive = true;
-        }
-        if(Math.abs(diff) > 3){
-          tooLarge = true
-        }
+      if(diff == 0) {
+        return false;
       }
-    })
-
-    if(hasSame || tooLarge || hasNegative==hasPositive) {
-      return false
-    }else {
-      return true;
+      if(diff < 0 ) {
+        hasNegative = true;
+      }
+      if(diff > 0 ) {
+        hasPositive = true;
+      }
+      if(Math.abs(diff) > 3){
+        return false
+      }
+      
     }
+    return hasNegative!=hasPositive
   }
 
- 
+
 }
 
 new Day02().solve();
