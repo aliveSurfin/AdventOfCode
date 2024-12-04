@@ -86,12 +86,6 @@ class Day04 extends Day {
       [x + 1, y + 1]
     ];
 
-    for (let corner of corners) {
-      if (corner[0] < 0 || corner[0] >= this.grid[0].length || corner[1] < 0 || corner[1] >= this.grid.length) {
-        return 0;
-      }
-    }
-
     const checks = [
       [0, 3],
       [1, 2],
@@ -102,6 +96,9 @@ class Day04 extends Day {
   for (const [mIndex, sIndex] of checks) {
     if (this.grid[corners[mIndex][1]][corners[mIndex][0]] === 'M' && this.grid[corners[sIndex][1]][corners[sIndex][0]] === 'S') {
         count++;
+        if (count == 2) {
+          return 1;
+        }
     }
   }
 
