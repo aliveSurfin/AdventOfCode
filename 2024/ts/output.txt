@@ -1,0 +1,44 @@
+
+> all
+> for d in days/*/ ; do if [ "$d" != "days/00/" ]; then tsx $d/day.ts; fi; done
+
+
+Day 01
+p1:  1765812 (1.3170 ms)
+p2:  20520794 (3.8650 ms)
+total time taken:  5.1820 ms
+
+Day 02
+p1:  524 (2.0405 ms)
+p2:  569 (0.0033 ms)
+total time taken:  2.0438 ms
+
+Day 03
+p1:  171183089 (0.8683 ms)
+p2:  63866497 (0.2230 ms)
+total time taken:  1.0913 ms
+
+Day 04
+p1:  2639 (3.3096 ms)
+p2:  2005 (4.3771 ms)
+total time taken:  7.6867 ms
+
+Day 05
+p1:  4766 (1.9337 ms)
+p2:  6257 (0.5261 ms)
+total time taken:  2.4598 ms
+
+Day 06
+p1:  4778 (3.7546 ms)
+p2:  1618 (16093.2159 ms)
+total time taken:  16096.9705 ms
+
+Day 07
+p1:  2437272016585 (34.4883 ms)
+p2:  162987117690649 (4093.7886 ms)
+total time taken:  4128.2769 ms
+
+Day 08
+p1:  228 (0.5951 ms)
+p2:  766 (1.1373 ms)
+total time taken:  1.7323 ms

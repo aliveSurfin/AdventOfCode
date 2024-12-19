@@ -3,7 +3,8 @@
 
 # Run all scripts
 all:
-	npm run all
+	@npm run all | tee output.txt
+	@./generate_chart.sh
 
 # Define the default target pattern
 %:
